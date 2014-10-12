@@ -1,0 +1,42 @@
+body
+{
+	background-color:#FFFFFF;
+	font-family:verdana,arial,sans-serif;
+}
+
+#formTblContainer
+{
+	display:table;
+	background-color:maroon;
+	border: 1px solid black;
+	padding: 0px 5px 0px 5px;
+	border-spacing:5px;
+
+}
+
+#leftPanelTblCell
+{
+	display:table-cell;
+	vertical-align:top;
+}
+
+#courseHistoryTblCell
+{
+	display:table-cell;
+	vertical-align:top;
+}
+
+#formTblRow
+{
+	display:table-row;
+}
+
+#suggestion-box
+{
+	background-color:#AAAAAA;
+	width:100%;
+	height:150px;
+	overflow:auto;
+	overflow-x:hidden;
+	font-size:80%;
+}
