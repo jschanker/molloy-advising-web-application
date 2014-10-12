@@ -1,0 +1,118 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title>Molloy Advisement Web Application</title>
+		<meta charset = "utf-8">
+		<link type = "text/css" rel = "stylesheet" href = "advisement-styles.css">
+		<script src = "las-requirements.js"></script>
+		<script src = "gened-requirements.js"></script>
+		<script src = "courses.js"></script>
+		<script src = "input-processor.js"></script>
+		<script>
+			function generateReport()
+			{
+				/*var courseHistory = document.getElementById('course-history-box').value;
+				var semestersToGraduate = document.getElementById('graduation-select').value;
+				var firstMajor = document.getElementById('first-major-select').value;
+				var secondMajor = document.getElementById('second-major-select').value;
+				var minor = document.getElementById('minor-select').value;*/
+
+				var courseInput = {
+					courseHistory:document.getElementById('course-history-box').value,
+					semestersToGraduate:document.getElementById('graduation-select').value,
+					firstMajor:document.getElementById('first-major-select').value,
+					secondMajor:document.getElementById('second-major-select').value,
+					minor:document.getElementById('minor-select').value
+				};
+
+				var responseItems = generateAdvice(courseInput);
+				//var responseItems = parseCourseHistory(courseHistory);
+				var responseHTML = "<ol>\n";
+				for(var i = 0; i < responseItems.length;i++)
+				{
+					var responseItem = responseItems[i];
+					if(responseItem)
+						responseHTML += "\t<li>" + responseItem + "</li>\n";
+				}
+				responseHTML += "</ol>";
+				document.getElementById('suggestion-box').innerHTML = responseHTML;
+				//alert(responseHTML);
+				//parseCourseHistory(document.getElementById('course-history-box').value);
+			}
+		</script>
+	</head>
+	<body>
+		<h1>Molloy Advisement Web Application</h1>
+		<form>
+			<div id = "formTblContainer">
+				<div id = "formTblRow">
+					<div id = "leftPanelTblCell">
+						<p><label for = "first-major-select">First Major:</label></p>
+						<p>
+							<SELECT name = "first-major" id = "first-major-select">
+								<OPTION value = "csc">B.A. Computer Science</OPTION>
+								<OPTION value = "mat">B.A. Mathematics</OPTION>
+								<OPTION value = "cis">B.S. Computer Information Systems</OPTION>
+								<OPTION value = "other">Other</OPTION>
+							</SELECT>
+						</p>
+						<p><label for = "second-major-select">Second Major:</label></p>
+						<p>
+							<SELECT name = "second-major" id = "second-major-select">
+								<OPTION value = "csc">B.A. Computer Science</OPTION>
+								<OPTION value = "mat">B.A. Mathematics</OPTION>
+								<OPTION value = "cis">B.S. Computer Information Systems</OPTION>
+								<OPTION value = "none" SELECTED>None</OPTION>
+								<OPTION value = "other">Other</OPTION>
+							</SELECT>
+						</p>
+						<p><label for = "minor-select">Minor:</label></p>
+						<p>
+							<SELECT name = "minor" id = "minor-select">
+								<OPTION value = "csc">B.A. Computer Science</OPTION>
+								<OPTION value = "mat">B.A. Mathematics</OPTION>
+								<OPTION value = "cis">B.S. Computer Information Systems</OPTION>
+								<OPTION value = "none" SELECTED>None</OPTION>
+								<OPTION value = "other">Other</OPTION>
+							</SELECT>
+						</p>
+						<p><label for = "graduation-select">Planned Graduation:</label></p>
+						<p>
+							<SELECT name = "graduation" id = "graduation-select">
+								<OPTION value = "1">Spring 2015 (Senior)</OPTION>
+								<OPTION value = "2">Fall 2015</OPTION>
+								<OPTION value = "3">Spring 2016 (Junior)</OPTION>
+								<OPTION value = "4">Fall 2016</OPTION>
+								<OPTION value = "5">Spring 2017 (Sophmore)</OPTION>
+								<OPTION value = "6">Fall 2017</OPTION>
+								<OPTION value = "7">Spring 2018 (Freshman)</OPTION>
+								<OPTION value = "8">Fall 2018</OPTION>
+								<OPTION value = "9">Spring 2019 (Freshman in 5-year)</OPTION>
+							</SELECT>
+						</p>
+						<p><label for = "course-box">Planned Courses:</label></p>
+						<p><TEXTAREA name = "courses" id = "course-box" rows = "8" cols = "50"></TEXTAREA></p>
+						<p><label for = "suggestion-box">Suggestions/Warnings:</label></p>
+						<!--<p><TEXTAREA name = "suggestions" id = "suggestion-box" rows = "10" cols = "50"></TEXTAREA></p>-->
+						<div id = "suggestion-box">
+							<SPAN STYLE = "color:#000000;font-weight:bold;">Information will appear here.  Note: If you're using certain older browsers, it may not appear properly.<BR>
+							<!--Information will appear here.<BR>
+							Information will appear here.<BR>
+							Information will appear here.<BR>
+							Information will appear here.<BR>
+							Information will appear here.<BR>
+							Information will appear here.<BR>
+							Information will appear here.<BR>-->
+						</div>
+						<p><input type = "button" value = "Get Advice!" onClick = "generateReport()"></p>
+					</div>
+					<div id = "courseHistoryTblCell">
+						<p><label for = "course-history-box">Course History:</label></p>
+						<p><TEXTAREA name = "course-history" id = "course-history-box" rows = "50" cols = "75"></TEXTAREA></p>
+					</div>
+				</div>
+			</div>
+		</form>
+	</body>
+</html>
