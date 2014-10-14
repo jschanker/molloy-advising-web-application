@@ -42,7 +42,7 @@ function getGenEdObject()
 	history = history.concat(cl_history_politicalScience);
 	politicalScience = politicalScience.concat(cl_history_politicalScience);*/
 	    history = history.concat(["HIS  213", "HIS  234", "HIS  235", "HIS  236", "HIS  340"]);
-            politicalScience = politicalScience.concat(["POL  213", "POL  234", "POL  235", "POL  236", "POL  340"]);
+        politicalScience = politicalScience.concat(["POL  213", "POL  234", "POL  235", "POL  236", "POL  340"]);
 	var psychology = ["PSY  111", "PSY  204", "PSY  205", "PSY  206", "PSY  237"];
 	var sociology = ["SOC  101", "SOC  152", "SOC  161", "SOC  166", "SOC  225H", "SOC  325H"];
 	var mathematics = ["MAT  110", "MAT  114", "MAT  115", "MAT  116", "MAT  118", "MAT  129", "MAT  136", 
@@ -58,8 +58,8 @@ function getGenEdObject()
     /*var cl_politicalScience_philosophy = ["PHI/POL 310"];
     philosophy = philosophy.concat(cl_politicalScience_philosophy);
     politicalScience = politicalScience.concat(cl_politicalScience_philosophy);*/
-            philosophy = philosophy.concat(["PHI  310"]);
-            politicalScience = politicalScience.concat(["POL  310"]);
+        philosophy = philosophy.concat(["PHI  310"]);
+        politicalScience = politicalScience.concat(["POL  310"]);
 	var theology = ["THE  100", "THE  101", "THE  104", "THE  220H","THE  221", "THE  225", "THE  230", "THE  241",
 	                "THE  242", "THE  251", "THE  252", "THE  254", "THE  257", "THE  260", "THE  262", "THE  263",
 	                "THE  265", "THE  273", "THE  281", "THE  285", "THE  300", "THE  320H","THE  325", "THE  330",
@@ -85,73 +85,73 @@ function getGenEdObject()
 	            // core is 4 credits
 
 	var artsAndFineArtsCategory = {
-		name: "Arts and Fine Arts"
+		name: "Arts and Fine Arts",
 		neededAreas: 2,
 		totalCredits: 6,
 		areas: [artHistory, musicHistory, communications]
 	};
 	var englishCategory = {
-		name: "English"
+		name: "English",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [english]
 	};
 	var modernLanguageCategory = {
-		name: "Modern Language"
+		name: "Modern Language",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [modernLanguages]
 	};
 	var englishModernLanguageLiteratureCategory = {
-		name: "Modern Language/English Literature/Modern Language Literature"
+		name: "Modern Language/English Literature/Modern Language Literature",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [modernLanguages, englishLiterature, modernLanguageLiterature]
 	};
 	var socialAndBehavioralSciencesCategory = {
-		name: "Social and Behavioral Sciences"
+		name: "Social and Behavioral Sciences",
 		neededAreas: 3,
 		totalCredits: 9,
 		areas: [history, politicalScience, psychology, sociology]
 	};
 	var mathCategory = {
-		name: "Mathematics"
+		name: "Mathematics",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [mathematics]
 	};
 	var scienceCategory = {
-		name: "Science"
+		name: "Science",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [science]
 	};
 	var philosophyCategory = {
-		name: "Philosophy"
+		name: "Philosophy",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [philosophy]
 	};
 	var theologyCategory = {
-		name: "Theology"
+		name: "Theology",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [theology]
 	};
 	var ethicsCategory = {
-		name: "Ethics"
+		name: "Ethics",
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [ethics]
 	};
 	var physicalEducationCategory = {
-		name: "Physical Education"
+		name: "Physical Education",
 		neededAreas: 1,
 		totalCredits: 1,
 		areas: [physicalEducation]
 	};
 	var coreCategory = {
-		name: "CORE"
+		name: "CORE",
 		neededAreas: 1,
 		totalCredits: 4,
 		areas: [core]
