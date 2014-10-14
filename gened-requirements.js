@@ -50,7 +50,7 @@ function getGenEdObject()
 	var science = ["BIO  110", "BIO  112", "BIO  114", "BIO  120", "BIO  126", "BIO  150", "BIO  151", "BIO  280H",
 	               "BIO  380H","CHE  103", "CHE  110", "CHE  112", "CHE  113", "CHE  132", "CHE  200", "ENV  101",
 	               "ESC  115", "ESC  125", "ESC  127", "ESC  130", "GEO  200", "PHY  270"];
-	var philosopy = ["PHI  100", "PHI  102", "PHI  110", "PHI  160", "PHI  201", "PHI  225H","PHI  231", 
+	var philosophy = ["PHI  100", "PHI  102", "PHI  110", "PHI  160", "PHI  201", "PHI  225H","PHI  231", 
 	                 "COM  237", "PHI  237", "PHI  260", "PHI  268", "PHI  270", "PHI  275", "PHI  280",
 	                 "PHI  281", "PHI  290", "PHI  301", "PHI  313", "PHI  315", "PHI  320", "MAT  322",
 	                 "PHI  322", "MAT  324", "PHI  324", "PHI  325H","PHI  330", "PHI  340", "PHI  352",
