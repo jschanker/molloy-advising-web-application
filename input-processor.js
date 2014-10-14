@@ -218,6 +218,69 @@ function getGenEdWarning(courseHistoryItems)
 	return warning;
 }
 
+function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, takenCourseCodes, maxDepth)
+{
+	// Returns the minimum number of semesters starting from Fall 2014 required to get the course
+	// with code courseAreaCode courseNumber if you take it startSemesterOffset semesters after Spring 2015 
+	// and have courses takenCourseCodes due to prerequisites and scheduled course offering times:
+	//
+	// For example, if course A only runs in the Spring and requires course B which only runs in the fall 
+	// which requires course C which only runs in the spring and takenCourseCodes does not include course C,
+	// getCourseDepth will return 3 with a startSemesterOffset of 1, but returns 5 with a startSemesterOffset
+	// of 2 or 3 since you need to wait until Spring of 2016 to take course C if you don't take it in Spring
+	// 2015.
+
+	var courseItem = getCourseWithCode(courseAreaCode, courseNumber);
+	//alert(courseItem.prerequisites);
+	var courseCode = courseAreaCode + "  " + courseNumber;
+	var maxNumOfSemesters = startSemesterOffset;
+	var fourBitString;
+
+	if(maxDepth <= 0)
+		return startSemesterOffset; // prevent circular list of requirements leading to infinite recursion
+
+	if(takenCourseCodes.indexOf(courseCode) != -1)
+		return startSemesterOffset;
+
+	for(var i = 0; i < courseItem.prerequisites.length; i++)
+	{
+		var prerequisiteCourseCode = courseItem.prerequisites[i];
+		var prerequisiteCourseAreaCode = prerequisiteCourseCode.substring(0, prerequisiteCourseCode.indexOf(" "));
+		var prerequisiteCourseNumber = parseInt(prerequisiteCourseCode.substring(prerequisiteCourseCode.indexOf("  ")+2));
+		var neededSemesters = getCourseDepth(prerequisiteCourseAreaCode, prerequisiteCourseNumber, 
+			                                 startSemesterOffset, takenCourseCodes, maxDepth-1);
+		if(neededSemesters+1 > maxNumOfSemesters)
+			maxNumOfSemesters = neededSemesters+1;
+	}
+
+	if((parseInt(courseItem.offered) & 15) == 0)
+	{
+		//alert(parseInt(courseItem.offered) & 15);
+		return 100+maxNumOfSemesters; // course is never offered or invalid offered 4-bit string
+	}
+
+	//maxNumOfSemesters++;
+	fourBitString = 1 << (3 - maxNumOfSemesters % 4);
+
+	while((parseInt(courseItem.offered) & fourBitString) == 0)
+	{
+		// circular shift
+		if(fourBitString == 1)
+		{
+			//alert("8 == 0");
+			fourBitString = 8;
+		}
+		else
+			fourBitString = fourBitString >> 1;
+
+		maxNumOfSemesters++;
+	}
+
+	return maxNumOfSemesters;
+
+	//getCourseItems(courseHistoryItems, [courseCode], criteriaFunction)
+}
+
 function generateAdvice(courseInput)
 {
 	var courseHistoryItems = parseCourseHistory(courseInput.courseHistory);
@@ -257,6 +320,8 @@ function generateAdvice(courseInput)
 	adviceItems.push(genEdWarning);
 	adviceItems.push(creditWarning);
 	adviceItems.push(getLASCreditWarning(LASCreditCount + LASCreditsInProgress, courseInput.semestersToGraduate));
+
+	//alert("Depth: " + getCourseDepth("MAT", 115, 8, generateCourseCodeList(courseHistoryItems), 5));
 
 	return adviceItems;
 
