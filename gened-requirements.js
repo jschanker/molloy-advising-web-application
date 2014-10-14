@@ -37,10 +37,12 @@ function getGenEdObject()
 	var politicalScience = ["POL  100", "POL  101", "POL  103", "POL  106", "POL  107", "POL  115", "POL  200",
 	                        "POL  201", "POL  206", "POL  209", "POL  210", "POL  302", "POL  303", "POL  311",
 	                        "POL  321", "POL  390"];
-	var cl_history_politicalScience = ["HIS/POL  213", "HIS/POL  234", "HIS/POL  235", "HIS/POL  236", 
+	/*var cl_history_politicalScience = ["HIS/POL  213", "HIS/POL  234", "HIS/POL  235", "HIS/POL  236", 
 	                                   "HIS/POL  340"];
 	history = history.concat(cl_history_politicalScience);
-	politicalScience = politicalScience.concat(cl_history_politicalScience);
+	politicalScience = politicalScience.concat(cl_history_politicalScience);*/
+	    history = history.concat(["HIS  213", "HIS  234", "HIS  235", "HIS  236", "HIS  340"]);
+            politicalScience = politicalScience.concat(["POL  213", "POL  234", "POL  235", "POL  236", "POL  340"]);
 	var psychology = ["PSY  111", "PSY  204", "PSY  205", "PSY  206", "PSY  237"];
 	var sociology = ["SOC  101", "SOC  152", "SOC  161", "SOC  166", "SOC  225H", "SOC  325H"];
 	var mathematics = ["MAT  110", "MAT  114", "MAT  115", "MAT  116", "MAT  118", "MAT  129", "MAT  136", 
@@ -53,16 +55,20 @@ function getGenEdObject()
 	                 "PHI  281", "PHI  290", "PHI  301", "PHI  313", "PHI  315", "PHI  320", "MAT  322",
 	                 "PHI  322", "MAT  324", "PHI  324", "PHI  325H","PHI  330", "PHI  340", "PHI  352",
 	                 "PHI  355", "PHI  356", "PHI  357", "PHI  390"]; // Note: Math/COM courses both listed
-	var cl_politicalScience_philosophy = ["PHI/POL 310"];
-	philosophy = philosophy.concat(cl_politicalScience_philosophy);
-	politicalScience = politicalScience.concat(cl_politicalScience_philosophy);
+    /*var cl_politicalScience_philosophy = ["PHI/POL 310"];
+    philosophy = philosophy.concat(cl_politicalScience_philosophy);
+    politicalScience = politicalScience.concat(cl_politicalScience_philosophy);*/
+            philosophy = philosophy.concat(["PHI  310"]);
+            politicalScience = politicalScience.concat(["POL  310"]);
 	var theology = ["THE  100", "THE  101", "THE  104", "THE  220H","THE  221", "THE  225", "THE  230", "THE  241",
 	                "THE  242", "THE  251", "THE  252", "THE  254", "THE  257", "THE  260", "THE  262", "THE  263",
 	                "THE  265", "THE  273", "THE  281", "THE  285", "THE  300", "THE  320H","THE  325", "THE  330",
 	                "THE  340", "THE  350", "THE  355", "THE  370", "THE  390"];
-	var cl_philosopy_theology = ["PHI/THE 270"];
+	/*var cl_philosopy_theology = ["PHI/THE 270"];
 	philosophy = philosophy.concat(cl_philosopy_theology);
-	theology = theology.concat(cl_philosopy_theology);
+	theology = theology.concat(cl_philosopy_theology);*/
+	    philosophy = philosophy.concat(["PHI  270"]);
+	    theology = theology.concat(["THE  270"]);
 	var ethics = ["ETH  250", "ETH  252", "ETH  254", "ETH  255", "ETH  257", "ETH  258", "ETH  279", "ETH  280H",
 	              "ETH  288", "ETH  290", "ETH  318H","ETH  390", "ETH  505", "PHI  250", "PHI  252", "PHI  253",
 	              "PHI  254", "PHI  255", "PHI  256", "PHI  257", "PHI  258", "PHI  380H","PHI  505", "THE  278",
@@ -79,61 +85,73 @@ function getGenEdObject()
 	            // core is 4 credits
 
 	var artsAndFineArtsCategory = {
+		name: "Arts and Fine Arts"
 		neededAreas: 2,
 		totalCredits: 6,
 		areas: [artHistory, musicHistory, communications]
 	};
 	var englishCategory = {
+		name: "English"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [english]
 	};
 	var modernLanguageCategory = {
+		name: "Modern Language"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [modernLanguages]
 	};
 	var englishModernLanguageLiteratureCategory = {
+		name: "Modern Language/English Literature/Modern Language Literature"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [modernLanguages, englishLiterature, modernLanguageLiterature]
 	};
 	var socialAndBehavioralSciencesCategory = {
+		name: "Social and Behavioral Sciences"
 		neededAreas: 3,
 		totalCredits: 9,
 		areas: [history, politicalScience, psychology, sociology]
 	};
 	var mathCategory = {
+		name: "Mathematics"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [mathematics]
 	};
 	var scienceCategory = {
+		name: "Science"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [science]
 	};
 	var philosophyCategory = {
+		name: "Philosophy"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [philosophy]
 	};
 	var theologyCategory = {
+		name: "Theology"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [theology]
 	};
 	var ethicsCategory = {
+		name: "Ethics"
 		neededAreas: 1,
 		totalCredits: 3,
 		areas: [ethics]
 	};
 	var physicalEducationCategory = {
+		name: "Physical Education"
 		neededAreas: 1,
 		totalCredits: 1,
 		areas: [physicalEducation]
 	};
 	var coreCategory = {
+		name: "CORE"
 		neededAreas: 1,
 		totalCredits: 4,
 		areas: [core]
