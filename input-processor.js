@@ -45,11 +45,15 @@ function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction)
 	// that meet the given criteriaFunction
 
 	var credits = 0;
+	var courseCodes = [];
+
 	for(var i = 0; i < courseHistoryItems.length; i++)
 	{
 		var courseCode = courseHistoryItems[i].courseAreaCode + "  " + courseHistoryItems[i].courseNumber;
-		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) )
+		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) 
+			&& courseCodes.indexOf(courseCode) == -1)
 		{
+			courseCodes.push(courseCode); // add course so it's not double counted
 			credits += parseFloat(courseHistoryItems[i].credits);
 		}
 	}
@@ -62,11 +66,15 @@ function getCourseItems(courseHistoryItems, courseList, criteriaFunction)
 	// that meet the given criteriaFunction
 
 	var courseItems = [];
+	var courseCodes = [];
+
 	for(var i = 0; i < courseHistoryItems.length; i++)
 	{
 		var courseCode = courseHistoryItems[i].courseAreaCode + "  " + courseHistoryItems[i].courseNumber;
-		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) )
+		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) 
+			&& courseCodes.indexOf(courseCode) == -1)
 		{
+			courseCodes.push(courseCode); // add course so it's not double counted
 			courseItems.push(courseHistoryItems[i]);
 		}
 	}
@@ -99,7 +107,7 @@ function getCreditWarning(numOfCredits, semestersToGraduate)
 
 	if(neededCredits > totalCreditsUnderMaxLoad)
 	{
-		warning = "Even taking " + MAX_TERM_CREDIT_LOAD + 
+		warning = "You still need " + neededCredits + " credits.  Even taking " + MAX_TERM_CREDIT_LOAD + 
 		          " credits per term, it appears that you won't be able to graduate at the specified time "
 		          + "without taking summer courses.";
 	}
