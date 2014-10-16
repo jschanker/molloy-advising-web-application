@@ -45,40 +45,15 @@ function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction)
 	// that meet the given criteriaFunction
 
 	var credits = 0;
-	var courseCodes = [];
-
 	for(var i = 0; i < courseHistoryItems.length; i++)
 	{
 		var courseCode = courseHistoryItems[i].courseAreaCode + "  " + courseHistoryItems[i].courseNumber;
-		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) 
-			&& courseCodes.indexOf(courseCode) == -1)
+		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) )
 		{
-			courseCodes.push(courseCode); // add course so it's not double counted
 			credits += parseFloat(courseHistoryItems[i].credits);
 		}
 	}
 	return credits;
-}
-
-function getCourseItems(courseHistoryItems, courseList, criteriaFunction)
-{
-	// returns an array of course items taken in courseList
-	// that meet the given criteriaFunction
-
-	var courseItems = [];
-	var courseCodes = [];
-
-	for(var i = 0; i < courseHistoryItems.length; i++)
-	{
-		var courseCode = courseHistoryItems[i].courseAreaCode + "  " + courseHistoryItems[i].courseNumber;
-		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) 
-			&& courseCodes.indexOf(courseCode) == -1)
-		{
-			courseCodes.push(courseCode); // add course so it's not double counted
-			courseItems.push(courseHistoryItems[i]);
-		}
-	}
-	return courseItems;
 }
 
 function generateCourseCodeList(courseItems)
@@ -107,7 +82,7 @@ function getCreditWarning(numOfCredits, semestersToGraduate)
 
 	if(neededCredits > totalCreditsUnderMaxLoad)
 	{
-		warning = "You still need " + neededCredits + " credits.  Even taking " + MAX_TERM_CREDIT_LOAD + 
+		warning = "Even taking " + MAX_TERM_CREDIT_LOAD + 
 		          " credits per term, it appears that you won't be able to graduate at the specified time "
 		          + "without taking summer courses.";
 	}
@@ -138,147 +113,6 @@ function getLASCreditWarning(numOfLASCredits, semestersToGraduate)
 	}
 
 	return warning;
-}
-
-function getNeededGenEdRequirements(courseHistoryItems)
-{
-	var genEdRequirements = getGenEdObject();
-	var numOfCategories = genEdRequirements.length;
-	var gradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer", "WIP"];
-	var categoriesAndCreditsNeeded = [];
-	var coursesCounted = [];
-	//var historyCourseCodeList = generateCourseCodeList(courseHistoryItems);
-
-    // For now assume cross-listed courses are counted according to their current
-    // designation (e.g., HIS 213 counted as a history requirement and not as a Political Science
-    // requirement even though it's cross-listed as POL 213)
-
-	for(var i = 0; i < numOfCategories; i++)
-	{
-		var genEdCategory = genEdRequirements[i];
-		var numOfCoursesFromCategoryNeeded = parseInt(genEdCategory.neededAreas);
-		var numOfCreditsFromCategoryNeeded = parseFloat(genEdCategory.totalCredits);
-		var neededCreditsPerArea = genEdCategory.totalCredits / genEdCategory.neededAreas;
-		// assume each area is equally represented by credits in category
-		var neededCoursesPerArea = 1; // assume only 1 requirement is needed from each area
-
-		for(var j = 0; j < genEdCategory.areas.length; j++)
-		{
-			// iterate over areas in category
-			var creditsCountedForArea = 0;
-			var coursesCountedForArea = 0;
-			var courseItems = getCourseItems(courseHistoryItems, genEdCategory.areas[j], 
-				function(courseItem)
-				{
-					return gradeList.indexOf(courseItem.grade) != -1; // passing grade in course or in progress
-				}); // courseItems stores all taken courses with passing grades (or in-progress) from area
-			for(var k = 0; k < courseItems.length; k++)
-			{
-				courseDesignation = courseItems[k].courseAreaCode + "  " + courseItems[k].courseNumber;
-				if(coursesCounted.indexOf(courseDesignation) == -1)
-				{ // course not already counted
-					var creditsCountedFromCourse = Math.min(neededCreditsPerArea, parseFloat(courseItems[k].credits));
-					if(coursesCountedForArea < neededCoursesPerArea)
-					{
-						numOfCoursesFromCategoryNeeded--;
-						coursesCountedForArea++;
-						coursesCounted.push(courseDesignation);
-					}
-					if(creditsCountedForArea < neededCreditsPerArea)
-					{
-						creditsCountedForArea += creditsCountedFromCourse;
-						numOfCreditsFromCategoryNeeded -= creditsCountedFromCourse;
-						if(coursesCounted.indexOf(courseDesignation) == -1)
-							coursesCounted.push(courseDesignation);
-					}
-				}
-			}
-		}
-		if(numOfCreditsFromCategoryNeeded > 0)
-			categoriesAndCreditsNeeded.push({name: genEdCategory.name, credits:numOfCreditsFromCategoryNeeded});
-
-	}
-
-	return categoriesAndCreditsNeeded;
-}
-
-function getGenEdWarning(courseHistoryItems)
-{
-	genEdCreditsNeeded = 0;
-	categoriesAndCreditsNeeded = getNeededGenEdRequirements(courseHistoryItems);
-	warning = "For your general education requirements, you still need the following:\n";
-	for(var i = 0; i < categoriesAndCreditsNeeded.length; i++)
-	{
-		genEdCreditsNeeded += parseFloat(categoriesAndCreditsNeeded[i].credits);
-		warning += categoriesAndCreditsNeeded[i].credits + " credit(s) of " + categoriesAndCreditsNeeded[i].name + ", \n";
-	}
-
-	warning += "for a total of " + genEdCreditsNeeded + " credit(s)."
-
-	return warning;
-}
-
-function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, takenCourseCodes, maxDepth)
-{
-	// Returns the minimum number of semesters starting from Fall 2014 required to get the course
-	// with code courseAreaCode courseNumber if you take it startSemesterOffset semesters after Spring 2015 
-	// and have courses takenCourseCodes due to prerequisites and scheduled course offering times:
-	//
-	// For example, if course A only runs in the Spring and requires course B which only runs in the fall 
-	// which requires course C which only runs in the spring and takenCourseCodes does not include course C,
-	// getCourseDepth will return 3 with a startSemesterOffset of 1, but returns 5 with a startSemesterOffset
-	// of 2 or 3 since you need to wait until Spring of 2016 to take course C if you don't take it in Spring
-	// 2015.
-
-	var courseItem = getCourseWithCode(courseAreaCode, courseNumber);
-	//alert(courseItem.prerequisites);
-	var courseCode = courseAreaCode + "  " + courseNumber;
-	var maxNumOfSemesters = startSemesterOffset;
-	var fourBitString;
-
-	if(maxDepth <= 0)
-		return startSemesterOffset; // prevent circular list of requirements leading to infinite recursion
-
-	if(takenCourseCodes.indexOf(courseCode) != -1)
-		return startSemesterOffset;
-
-	for(var i = 0; i < courseItem.prerequisites.length; i++)
-	{
-		var prerequisiteCourseCode = courseItem.prerequisites[i];
-		var prerequisiteCourseAreaCode = prerequisiteCourseCode.substring(0, prerequisiteCourseCode.indexOf(" "));
-		var prerequisiteCourseNumber = parseInt(prerequisiteCourseCode.substring(prerequisiteCourseCode.indexOf("  ")+2));
-		var neededSemesters = getCourseDepth(prerequisiteCourseAreaCode, prerequisiteCourseNumber, 
-			                                 startSemesterOffset, takenCourseCodes, maxDepth-1);
-		if(neededSemesters+1 > maxNumOfSemesters)
-			maxNumOfSemesters = neededSemesters+1;
-	}
-
-	if((parseInt(courseItem.offered) & 15) == 0)
-	{
-		//alert(parseInt(courseItem.offered) & 15);
-		return 100+maxNumOfSemesters; // course is never offered or invalid offered 4-bit string
-	}
-
-	//maxNumOfSemesters++;
-	fourBitString = 1 << (3 - maxNumOfSemesters % 4);
-
-	while((parseInt(courseItem.offered) & fourBitString) == 0)
-	{
-		// circular shift
-		if(fourBitString == 1)
-		{
-			//alert("8 == 0");
-			fourBitString = 8;
-		}
-		else
-			fourBitString = fourBitString >> 1;
-
-		maxNumOfSemesters++;
-	}
-
-	return maxNumOfSemesters;
-
-	//getCourseItems(courseHistoryItems, [courseCode], criteriaFunction)
 }
 
 function generateAdvice(courseInput)
@@ -316,12 +150,8 @@ function generateAdvice(courseInput)
 		});
 
 	var creditWarning = getCreditWarning(earnedCreditCount+creditsInProgress, courseInput.semestersToGraduate);
-	var genEdWarning = getGenEdWarning(courseHistoryItems);
-	adviceItems.push(genEdWarning);
 	adviceItems.push(creditWarning);
 	adviceItems.push(getLASCreditWarning(LASCreditCount + LASCreditsInProgress, courseInput.semestersToGraduate));
-
-	//alert("Depth: " + getCourseDepth("MAT", 115, 8, generateCourseCodeList(courseHistoryItems), 5));
 
 	return adviceItems;
 
@@ -331,19 +161,20 @@ function generateAdvice(courseInput)
 function parseCourseHistory(courseHistory)
 {
 	// returns an array of course objects from courseHistory string
-	var lines = courseHistory.split("\n");
+	//var lines = courseHistory.split("\n");
 	var courseItems = [];
 	var grades = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "F", "P", "W", "WA", "WF", "WIP", "Transfer"];
-	for(var i = 0; i < lines.length; i++)
+	for(var i = 0; i < courseHistory.length; i++)
 	{
-		var line = lines[i].replace(/\s+/g, ' ');
-		var courseInfo = line.split(' ');
+		//var line = lines[i].replace(/\s+/g, ' ');
+		//var courseInfo = line.split(' ');
+        var courseCurrent = courseHistory[i];
 		var courseItem = {
-			courseAreaCode:  courseInfo[0],
-			courseNumber:    courseInfo[1],
-			countsForCredit: courseInfo.indexOf("Credit") != -1 || courseInfo.indexOf("Transfer") != -1,
-			credits:         getMatch(courseInfo, /[0-9][.][0-9][0-9]/),
-			grade:           getCommonElement(courseInfo, grades)
+			courseAreaCode:  courseCurrent[0],
+			courseNumber:    courseCurrent[1],
+			countsForCredit: courseCurrent[2],
+			credits:         courseCurrent[3],
+			grade:           courseCurrent[4]
 		};
 		courseItems.push(courseItem);
 	}

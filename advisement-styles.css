@@ -31,6 +31,17 @@ body
 	display:table-row;
 }
 
+ #course-history-box{
+    background-color:maroon;
+    color:white;
+    border:2px solid white;
+   
+ }
+td, tr{
+   
+    border: 3px solid black;
+}
+
 #suggestion-box
 {
 	background-color:#AAAAAA;
