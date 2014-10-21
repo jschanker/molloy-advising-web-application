@@ -1,3 +1,8 @@
+New Name: DIGICAP web app
+=========================
+NOTE: To more accurately reflect the application's purpose, I'm renaming it DIGICAP (Discussion Information Guide In Charting Academic Progress).  The objective is to generate potentially important topics of discussion for the advisor to have with the student.  It is *NOT* intended as a replacement for the advising process.
+
+
 molloy-advising-web-application
 ===============================
 
