@@ -61,7 +61,33 @@
 							</SELECT>
 						</p>
 						<p><label for = "course-box">Planned Courses:</label></p>
-						<p><TEXTAREA name = "courses" id = "course-box" rows = "8" cols = "50"></TEXTAREA></p>
+						<p><table name = "courses-plans" id = "course-box-plans" >
+                            <thead>
+                                <tr>
+                                <td>Course Area</td>
+                                <td>Course Number</td>
+                                <td>Title</td>    
+                                <td>(Y/N) Counts for Credit</td>
+                                <td>Credits</td>
+                                <td>Grade</td>
+                                <td>Delete</td>
+                                </tr>
+                        </thead>
+                                <tbody>
+                                    <tr>
+                                    <td><select class='courseAreaBox' onchange="updateRow()" ></select></td>
+                                    <td><select class='courseNumberBox' onchange="updateTitle()"></select></td>
+                                    <td></td>
+                                    <td><select class='tfForCreditBox'><option value='T'>T</option><option value='F'>F</option></select></td>
+                                    <td><input type ='number' min='0' class='creditNumBox' value=''></td>
+                                    <td><select class='gradeSelectionBox'><option value='A'>A</option><option value='A-'>A-</option><option value='B+'>B+</option><option value='B'>B</option><option value='B-'>B-</option><option value='C+'>C+</option><option value='C'>C</option><option value='C-'>C-</option><option value="D+">D+</option><option value="D">D</option><option value='F'>F</option><option value='P'>P</option><option value='W'>W</option><option value='WA'>WA</option><option value='WF'>WF</option><option value='WIP'>WIP</option><option value='Transfer'>Transfer</option></select></td>
+                                    <td><input type='button' value='delete' onclick='removeRowPlans(this)'></td>
+                                    </tr>
+                                    
+                                    <tr><td colspan='7'><input type='button' value='Add another class' style='width:100%; height:50px;' onclick='addAnotherRowPlans()'></td></tr>
+                                </tbody>
+                        </table>
+                        </p>
 						<p><label for = "suggestion-box">Suggestions/Warnings:</label></p>
 						<!--<p><TEXTAREA name = "suggestions" id = "suggestion-box" rows = "10" cols = "50"></TEXTAREA></p>-->
 						<div id = "suggestion-box">
@@ -1072,7 +1098,9 @@ var LASString =
 	"\nTHE  MAJR,Theology Major,THEMAJR";
             
             var tableClasses = document.getElementById('course-history-box');
+            var plansTable = document.getElementById('course-box-plans');
             var typicalRow;
+            var typicalPlanRow;
             var newClass;
             var masterArray = [];
             var lasArray = LASString.split('\n');
@@ -1116,8 +1144,24 @@ var LASString =
                     
                     
                 }
+                
+                for(a = 1; a < plansTable.rows.length -1; a++){
+                    var currentRow = plansTable.rows[a];
+                    var titleCellNow = currentRow.getElementsByTagName('TD')[2];
+                    
+                    var x = document.createElement("OPTION");
+                        x.setAttribute("value", p);
+                        x.text = masterArray[p].title;                   
+                    currentRow.getElementsByClassName('courseAreaBox')[0].add(x);
+ 
+                    
+                    
+                }
+                
             }
             typicalRow = document.getElementById('course-history-box').rows[1];
+            typicalPlanRow = plansTable.rows[1];
+            
             
             for(a = 1; a < tableClasses.rows.length -1; a++){
                     var currentRow = tableClasses.rows[a];
@@ -1146,6 +1190,35 @@ var LASString =
                                         
                     
             }
+            
+
+            for(a = 1; a < plansTable.rows.length -1; a++){
+                    var currentRow = plansTable.rows[a];
+                    var titleCellNow = currentRow.getElementsByTagName('TD')[2];
+                    
+    
+                    var theindexMatch = currentRow.getElementsByClassName('courseAreaBox')[0].value;
+                    
+                    if(theindexMatch != -1){
+                        var currentClassesArray = masterArray[theindexMatch].classesArray;
+                        for(i = 0; i < currentClassesArray.length; i++){
+                            
+                            var x = document.createElement("OPTION");
+                            x.setAttribute("value", i);
+                            x.text = currentClassesArray[i].classNumber;
+                    
+                            currentRow.getElementsByClassName('courseNumberBox')[0].add(x);
+                            }
+                        
+                        
+                        
+                    }else{
+                        console.log('silliness at row ' + (a-1));
+                    }
+                    titleCellNow.innerHTML = masterArray[theindexMatch].classesArray[currentRow.getElementsByClassName('courseNumberBox')[0].value].classTitle;
+                                        
+                    
+            }            
            
             function removeRow(src)
             {
@@ -1160,6 +1233,31 @@ var LASString =
 
             }
             
+            function addAnotherRowPlans(){
+                var newRow = plansTable.insertRow(plansTable.rows.length -1);
+                for(z = 0; z< typicalPlanRow.cells.length; z++){
+                    var tempCell = newRow.insertCell(z);
+                    tempCell.innerHTML = typicalPlanRow.cells[z].innerHTML;
+                }
+                
+            
+            }
+            
+            function removeRowPlans(src)
+            {
+                /* src refers to the input button that was clicked. 
+                to get a reference to the containing <tr> element,
+                get the parent of the parent (in this case <tr>)
+                */   
+                
+                var oRow = src.parentElement.parentElement;  
+    
+                //once the row reference is obtained, delete it passing in its rowIndex   
+                plansTable.deleteRow(oRow.rowIndex);  
+                            
+
+            }
+            
             function addAnotherRow(){
                 var newRow = tableClasses.insertRow(tableClasses.rows.length -1);
                 for(z = 0; z< typicalRow.cells.length; z++){
@@ -1168,7 +1266,7 @@ var LASString =
                 }
                 
             
-            }
+            }            
             
             function updateRow(){
                 var arrayOFTitles = [];
@@ -1195,7 +1293,33 @@ var LASString =
                             courseNumBox.options.add(newOption);
                     }
                     
-                }            
+                }//updates history table
+                
+                for(a = 1; a < plansTable.rows.length -1; a++){
+                    var currentRow = plansTable.rows[a];
+                   
+                    var courseAreaBox = currentRow.getElementsByClassName('courseAreaBox')[0];
+                    var courseNumBox = currentRow.getElementsByClassName('courseNumberBox')[0];
+                    var tfCreditBox = currentRow.getElementsByClassName('tfForCreditBox')[0];
+                    var creditNumBox = currentRow.getElementsByClassName('creditNumBox')[0];
+                    var gradeSelectionBox = currentRow.getElementsByClassName('gradeSelectionBox')[0];
+                    var titleCell = currentRow.getElementsByTagName('TD')[2];
+                    var numLength = courseNumBox.options.length;
+
+                    courseNumBox.options.length = 0;
+                    
+                    var theCoursesArray = masterArray[courseAreaBox.value].classesArray;
+                    
+                    for(p = 0; p < theCoursesArray.length; p++){
+                        var newOption = document.createElement("OPTION");
+                            newOption.setAttribute("value", p);
+                            newOption.text = theCoursesArray[p].classNumber;   
+                    
+                            courseNumBox.options.add(newOption);
+                    }
+                    
+                }//updates academic plans table                
+                
                 updateTitle();   
             
             }
@@ -1211,7 +1335,19 @@ var LASString =
                     var numLength = courseNumBox.options.length;
                     titleCell.innerHTML = masterArray[courseAreaBox.value].classesArray[courseNumBox.value].classTitle;
                     
-                }
+                }//updating all titles in Course History
+                
+                
+                for(a = 1; a < plansTable.rows.length -1; a++){
+                    var currentRow = plansTable.rows[a];
+                   
+                    var courseAreaBox = currentRow.getElementsByClassName('courseAreaBox')[0];
+                    var courseNumBox = currentRow.getElementsByClassName('courseNumberBox')[0];
+                    var titleCell = currentRow.getElementsByTagName('TD')[2];
+                    var numLength = courseNumBox.options.length;
+                    titleCell.innerHTML = masterArray[courseAreaBox.value].classesArray[courseNumBox.value].classTitle;
+                    
+                } //updating all title is Academic Plans               
                 
                 
             }
@@ -1258,10 +1394,11 @@ var LASString =
                 }                
                 console.log('allComplete: ' + allComplete);
                 if(!allComplete){
-                    alert('You left at least one entry field in the history section blank');
+                    alert('You left at least one entry field blank');
                 }else{
                 
                 var classesArray = [];
+                    
                 for(a = 1; a < tableClasses.rows.length -1; a++){
                     var currentRow = tableClasses.rows[a];
                    
@@ -1274,6 +1411,24 @@ var LASString =
                     var tempClass = [courseAreaBox.options[courseAreaBox.value].text, courseNumBox.options[courseNumBox.value].text, tfCreditBox.value, creditNumBox.value, gradeSelectionBox.value];
                     classesArray[classesArray.length] = tempClass;
                 }
+                    
+                    
+                    
+                var classesPlannedArray = [];// array of data from academic plans table
+                    
+                for(a = 1; a < plansTable.rows.length -1; a++){
+                    var currentRow = plansTable.rows[a];
+                   
+                    var courseAreaBox = currentRow.getElementsByClassName('courseAreaBox')[0];
+                    var courseNumBox = currentRow.getElementsByClassName('courseNumberBox')[0];
+                    var tfCreditBox = currentRow.getElementsByClassName('tfForCreditBox')[0];
+                    var creditNumBox = currentRow.getElementsByClassName('creditNumBox')[0];
+                    var gradeSelectionBox = currentRow.getElementsByClassName('gradeSelectionBox')[0];
+                    console.log('adding coursearea ' + courseAreaBox.value + ' adding numbox ' + courseNumBox.options[courseNumBox.value].text + ' tf credit ' + tfCreditBox.value + ' credit ' + creditNumBox.value + ' grade ' + gradeSelectionBox.value);
+                    var tempClass = [courseAreaBox.options[courseAreaBox.value].text, courseNumBox.options[courseNumBox.value].text, tfCreditBox.value, creditNumBox.value, gradeSelectionBox.value];
+                    classesPlannedArray[classesPlannedArray.length] = tempClass;
+                }                    
+                    
                 
                 var courseInput = {
 					courseHistory:classesArray,

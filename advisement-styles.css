@@ -31,7 +31,7 @@ body
 	display:table-row;
 }
 
- #course-history-box{
+ table{
     background-color:maroon;
     color:white;
     border:2px solid white;
