@@ -54,7 +54,12 @@ function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction)
 			&& courseCodes.indexOf(courseCode) == -1)
 		{
 			courseCodes.push(courseCode); // add course so it's not double counted
-			credits += parseFloat(courseHistoryItems[i].credits);
+			var courseCredits = parseFloat(courseHistoryItems[i].credits);
+			if(courseCredits > 0)
+			{ // Patch to fix bug in which courseCredits = -1 because not actual course (e.g., Transfer)
+			  // There's still a problem here: when course is listed twice but still counted (Transfer credit)
+				credits += courseCredits;
+			}
 		}
 	}
 	return credits;
@@ -204,9 +209,9 @@ function getNeededGenEdRequirements(courseHistoryItems)
 
 function getGenEdWarning(courseHistoryItems)
 {
-	genEdCreditsNeeded = 0;
-	categoriesAndCreditsNeeded = getNeededGenEdRequirements(courseHistoryItems);
-	warning = "For your general education requirements, you still need the following:\n";
+	var genEdCreditsNeeded = 0;
+	var categoriesAndCreditsNeeded = getNeededGenEdRequirements(courseHistoryItems);
+	var warning = "For your general education requirements, you still need the following:\n";
 	for(var i = 0; i < categoriesAndCreditsNeeded.length; i++)
 	{
 		genEdCreditsNeeded += parseFloat(categoriesAndCreditsNeeded[i].credits);
@@ -281,12 +286,93 @@ function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, taken
 	//getCourseItems(courseHistoryItems, [courseCode], criteriaFunction)
 }
 
+function getMajorMinorAdvice(courseHistoryItems, majorOne, majorTwo, minor)
+{
+	var neededMajorAndMinorCourses = {
+		majorRequirements:[],
+		relatedRequirements:[]
+	};
+
+	var majorPassingGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "WIP", "Transfer"];
+
+	var majorAndRelatedRequirements = getMajorRequirements(majorOne);
+	for(var i = 0; i < majorAndRelatedRequirements.majorCodeNumbers.length; i++)
+	{
+		var hasOneCourseOption = false;
+		for(var j = 0; j < majorAndRelatedRequirements.majorCodeNumbers[i].length; j++)
+		{
+			var courseCode = majorAndRelatedRequirements.majorName + "  " + 
+			                 majorAndRelatedRequirements.majorCodeNumbers[i][j];
+			//alert(courseCode);
+			var countingCourses = getCourseItems(courseHistoryItems, [courseCode], 
+				function(courseItem)
+				{
+					return majorPassingGradeList.indexOf(courseItem.grade) != -1; // passing grade in course or in progress
+				}); // courseItems stores all taken courses with passing grades (or in-progress) from area
+			if(countingCourses.length > 0)
+				hasOneCourseOption = true; // taken at least one course for single class requirement
+
+			// Add variable to keep track of courses already counting toward other major
+		}
+
+		if(!hasOneCourseOption && majorAndRelatedRequirements.majorCodeNumbers[i].length > 0)
+		{
+			var neededCourse = getCourseWithCode(majorAndRelatedRequirements.majorName, 
+			                 majorAndRelatedRequirements.majorCodeNumbers[i][0]);
+
+			neededCourse.area = majorAndRelatedRequirements.majorName; // decorating object, add this as part of course item
+			neededCourse.codeNumber = majorAndRelatedRequirements.majorCodeNumbers[i][0]; // another quick patch: object decoration
+
+			neededMajorAndMinorCourses.majorRequirements.push(neededCourse);
+		}
+	}
+
+	return neededMajorAndMinorCourses;
+}
+
+function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate, courseHistoryCodes)
+{
+	// may want to include major/minor logic in this function instead
+
+	var majorCreditsNeeded = 0;
+    var MAX_COURSE_DEPTH = 8; // for error prevention: don't go deeper than 8 courses of prerequisites
+	
+	var warning = "For your major and (related requirements: NOT INCLUDED yet), you still need the following (Note: each course may have an unlisted alternative.):\n";
+	for(var i = 0; i < majorMinorCourseRequirements.majorRequirements.length; i++)
+	{
+		var requirement = majorMinorCourseRequirements.majorRequirements[i];
+		var credits = requirement.credits;
+		var title = requirement.title;
+		var area = requirement.area;
+		var code = requirement.codeNumber;
+		var neededNumberOfSemesters = getCourseDepth(area, code, 0, courseHistoryCodes, MAX_COURSE_DEPTH);
+
+		majorCreditsNeeded += parseFloat(credits);
+		warning += area + "  " + code + "  " + title + " \n";
+		if(neededNumberOfSemesters == semestersToGraduate-1)
+			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
+		               " to graduate on time without transfer credit.\n";
+		else if(neededNumberOfSemesters >= semestersToGraduate-1)
+			warning += "It appears that you will not be able to take this course in time to " + 
+		               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
+	}
+
+	warning += "You appear to need a total of " + majorCreditsNeeded + " credit(s) for your major."
+
+	return warning;
+}
+
 function generateAdvice(courseInput)
 {
 	var courseHistoryItems = parseCourseHistory(courseInput.courseHistory);
+	var majorOne = courseInput.firstMajor;
+	var majorTwo = courseInput.secondMajor;
+	var minor = courseInput.minor;
 	var LASCourseItems = getLASCodes();
 	var passGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer"]; 
 	var adviceItems = [];
+
+	var majorMinorCourseRequirements = getMajorMinorAdvice(courseHistoryItems, majorOne, majorTwo, minor);
 
 	var LASCreditCount = getNumOfCredits(courseHistoryItems, LASCourseItems, 
 		function(courseItem)
@@ -315,8 +401,12 @@ function generateAdvice(courseInput)
 			return courseItem.countsForCredit && courseItem.grade == "WIP"; // passing grade in course, not remedial
 		});
 
+	var majorMinorWarning = getMajorMinorWarning(majorMinorCourseRequirements, courseInput.semestersToGraduate, 
+		                                         generateCourseCodeList(courseHistoryItems));
+	//alert(earnedCreditCount);
 	var creditWarning = getCreditWarning(earnedCreditCount+creditsInProgress, courseInput.semestersToGraduate);
 	var genEdWarning = getGenEdWarning(courseHistoryItems);
+	adviceItems.push(majorMinorWarning);
 	adviceItems.push(genEdWarning);
 	adviceItems.push(creditWarning);
 	adviceItems.push(getLASCreditWarning(LASCreditCount + LASCreditsInProgress, courseInput.semestersToGraduate));
