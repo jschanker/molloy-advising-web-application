@@ -225,13 +225,14 @@ function getGenEdWarning(courseHistoryItems)
 
 function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, takenCourseCodes, maxDepth)
 {
-	// Returns the minimum number of semesters starting from Fall 2014 required to get the course
-	// with code courseAreaCode courseNumber if you take it startSemesterOffset semesters after Spring 2015 
-	// and have courses takenCourseCodes due to prerequisites and scheduled course offering times:
+	// Returns the beginning of the semester number starting from Fall 2014 for which you'll be able to take
+	// a course requiring code courseAreaCode courseNumber if you start the reuired sequence after startSemesterOffset 
+	// semesters following Spring 2015 and have courses takenCourseCodes due to prerequisites and scheduled 
+	// course offering times:
 	//
 	// For example, if course A only runs in the Spring and requires course B which only runs in the fall 
-	// which requires course C which only runs in the spring and takenCourseCodes does not include course C,
-	// getCourseDepth will return 3 with a startSemesterOffset of 1, but returns 5 with a startSemesterOffset
+	// which requires course C which only runs in the spring and takenCourseCodes does not include courses A, B, or C,
+	// getCourseDepth will return 4 with a startSemesterOffset of 1, but returns 6 with a startSemesterOffset
 	// of 2 or 3 since you need to wait until Spring of 2016 to take course C if you don't take it in Spring
 	// 2015.
 
@@ -254,8 +255,10 @@ function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, taken
 		var prerequisiteCourseNumber = parseInt(prerequisiteCourseCode.substring(prerequisiteCourseCode.indexOf("  ")+2));
 		var neededSemesters = getCourseDepth(prerequisiteCourseAreaCode, prerequisiteCourseNumber, 
 			                                 startSemesterOffset, takenCourseCodes, maxDepth-1);
-		if(neededSemesters+1 > maxNumOfSemesters)
-			maxNumOfSemesters = neededSemesters+1;
+		if(neededSemesters > maxNumOfSemesters)
+		{
+			maxNumOfSemesters = neededSemesters;
+		}
 	}
 
 	if((parseInt(courseItem.offered) & 15) == 0)
@@ -265,7 +268,7 @@ function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, taken
 	}
 
 	//maxNumOfSemesters++;
-	fourBitString = 1 << (3 - maxNumOfSemesters % 4);
+	fourBitString = 1 << (3 - (maxNumOfSemesters % 4));
 
 	while((parseInt(courseItem.offered) & fourBitString) == 0)
 	{
@@ -281,7 +284,7 @@ function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, taken
 		maxNumOfSemesters++;
 	}
 
-	return maxNumOfSemesters;
+	return maxNumOfSemesters+1;
 
 	//getCourseItems(courseHistoryItems, [courseCode], criteriaFunction)
 }
@@ -345,14 +348,14 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 		var title = requirement.title;
 		var area = requirement.area;
 		var code = requirement.codeNumber;
-		var neededNumberOfSemesters = getCourseDepth(area, code, 0, courseHistoryCodes, MAX_COURSE_DEPTH);
+		var neededNumberOfSemesters = getCourseDepth(area, code, 1, courseHistoryCodes, MAX_COURSE_DEPTH)-1;
 
 		majorCreditsNeeded += parseFloat(credits);
 		warning += area + "  " + code + "  " + title + " \n";
-		if(neededNumberOfSemesters == semestersToGraduate-1)
+		if(neededNumberOfSemesters == semestersToGraduate)
 			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
 		               " to graduate on time without transfer credit.\n";
-		else if(neededNumberOfSemesters >= semestersToGraduate-1)
+		else if(neededNumberOfSemesters >= semestersToGraduate)
 			warning += "It appears that you will not be able to take this course in time to " + 
 		               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
 	}
@@ -412,7 +415,7 @@ function generateAdvice(courseInput)
 	adviceItems.push(getLASCreditWarning(LASCreditCount + LASCreditsInProgress, courseInput.semestersToGraduate));
 
 	//alert("Depth: " + getCourseDepth("MAT", 115, 8, generateCourseCodeList(courseHistoryItems), 5));
-
+//alert(parseInt(getCourseWithCode("MAT", 232).offered));
 	return adviceItems;
 
 	//return ["Earned Credits: " + earnedCreditCount, "Earned LAS Credits: " + LASCreditCount];
