@@ -297,11 +297,22 @@ function getMajorMinorAdvice(courseHistoryItems, majorOne, majorTwo, minor)
 	};
 
 	var majorPassingGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "WIP", "Transfer"];
+	var relatedPassingGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "WIP", "Transfer"];
 
 	var majorAndRelatedRequirements = getMajorRequirements(majorOne);
+	var secondaryMajorAndRelatedRequirements = getMajorRequirements(majorTwo);
+	
+	var countedFirstMajorRequirementCodes = [];
+	var countedFirstRelatedRequirementCodes = [];
+	var countedSecondMajorRequirementCodes = [];
+	var countedSecondRelatedRequirementCodes = [];
+
 	for(var i = 0; i < majorAndRelatedRequirements.majorCodeNumbers.length; i++)
 	{
 		var hasOneCourseOption = false;
+		var useCourseWithIndex = -1; // If multiple options are present, may want to use a specific option so you can
+		                             // also get credit for other major or minor as well. => not used yet
+
 		for(var j = 0; j < majorAndRelatedRequirements.majorCodeNumbers[i].length; j++)
 		{
 			var courseCode = majorAndRelatedRequirements.majorName + "  " + 
@@ -312,8 +323,12 @@ function getMajorMinorAdvice(courseHistoryItems, majorOne, majorTwo, minor)
 				{
 					return majorPassingGradeList.indexOf(courseItem.grade) != -1; // passing grade in course or in progress
 				}); // courseItems stores all taken courses with passing grades (or in-progress) from area
-			if(countingCourses.length > 0)
+			if(!hasOneCourseOption && countingCourses.length > 0 && countedFirstMajorRequirementCodes.indexOf(courseCode) == -1)
+			{
 				hasOneCourseOption = true; // taken at least one course for single class requirement
+				useCourseWithIndex = j;
+				countedFirstMajorRequirementCodes.push(courseCode);
+			}
 
 			// Add variable to keep track of courses already counting toward other major
 		}
@@ -330,6 +345,51 @@ function getMajorMinorAdvice(courseHistoryItems, majorOne, majorTwo, minor)
 		}
 	}
 
+	/****VERY UGLY CODE DUPLICATION - THIS MUST BE FIXED LATER!****/
+
+	for(var i = 0; i < majorAndRelatedRequirements.relatedCodes.length; i++)
+	{
+		var hasOneCourseOption = false;
+		var useCourseWithIndex = -1; // If multiple options are present, may want to use a specific option so you can
+		                             // also get credit for other major or minor as well. => not used yet
+
+		for(var j = 0; j < majorAndRelatedRequirements.relatedCodes[i].length; j++)
+		{
+			var courseCode = majorAndRelatedRequirements.relatedCodes[i][j];
+			//alert(courseCode);
+			var countingCourses = getCourseItems(courseHistoryItems, [courseCode], 
+				function(courseItem)
+				{
+					return relatedPassingGradeList.indexOf(courseItem.grade) != -1; // passing grade in course or in progress
+				}); // courseItems stores all taken courses with passing grades (or in-progress) from area
+			if(!hasOneCourseOption && countingCourses.length > 0 && countedFirstRelatedRequirementCodes.indexOf(courseCode) == -1)
+			{ // hasn't already counted course
+				hasOneCourseOption = true; // taken at least one course for single class requirement
+				useCourseWithIndex = j;
+				countedFirstRelatedRequirementCodes.push(courseCode);
+			}
+
+			// Add variable to keep track of courses already counting toward other major
+		}
+
+		if(!hasOneCourseOption && majorAndRelatedRequirements.relatedCodes[i].length > 0)
+		{
+			var neededCourseCode = majorAndRelatedRequirements.relatedCodes[i][0];
+			var dividerIndex = neededCourseCode.indexOf("  "); // This should be implemented differently; store both area and code separately
+			if(dividerIndex >= 0)
+			{ // only chance for valid course code
+				var neededCourseArea = neededCourseCode.substring(0,dividerIndex);
+				var neededCourseNumber = parseInt(neededCourseCode.substring(dividerIndex+2));
+				var neededCourse = getCourseWithCode(neededCourseArea, neededCourseNumber);
+
+				neededCourse.area = neededCourseArea; // decorating object, add this as part of course item
+				neededCourse.codeNumber = neededCourseNumber; // another quick patch: object decoration
+
+				neededMajorAndMinorCourses.relatedRequirements.push(neededCourse);
+			}
+		}
+	}
+
 	return neededMajorAndMinorCourses;
 }
 
@@ -338,9 +398,10 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 	// may want to include major/minor logic in this function instead
 
 	var majorCreditsNeeded = 0;
+	var relatedCreditsNeeded = 0;
     var MAX_COURSE_DEPTH = 8; // for error prevention: don't go deeper than 8 courses of prerequisites
 	
-	var warning = "For your major and (related requirements: NOT INCLUDED yet), you still need the following (Note: each course may have an unlisted alternative.):\n";
+	var warning = "For your major and related requirements, you still need the following (Note: each course may have an unlisted alternative.):\n";
 	for(var i = 0; i < majorMinorCourseRequirements.majorRequirements.length; i++)
 	{
 		var requirement = majorMinorCourseRequirements.majorRequirements[i];
@@ -356,11 +417,34 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
 		               " to graduate on time without transfer credit.\n";
 		else if(neededNumberOfSemesters >= semestersToGraduate)
-			warning += "It appears that you will not be able to take this course in time to " + 
+			warning += "It appears that you will not be able to take this course in order" + 
 		               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
 	}
 
-	warning += "You appear to need a total of " + majorCreditsNeeded + " credit(s) for your major."
+	warning += "You appear to need a total of " + majorCreditsNeeded + " major requirement credit(s) for your major.\n\n";
+
+	//****MORE DISGUSTING CODE DUPLICATION COMING RIGHT UP******/
+
+	for(var i = 0; i < majorMinorCourseRequirements.relatedRequirements.length; i++)
+	{
+		var requirement = majorMinorCourseRequirements.relatedRequirements[i];
+		var credits = requirement.credits;
+		var title = requirement.title;
+		var area = requirement.area;
+		var code = requirement.codeNumber;
+		var neededNumberOfSemesters = getCourseDepth(area, code, 1, courseHistoryCodes, MAX_COURSE_DEPTH)-1;
+
+		relatedCreditsNeeded += parseFloat(credits);
+		warning += area + "  " + code + "  " + title + " \n";
+		if(neededNumberOfSemesters == semestersToGraduate)
+			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
+		               " to graduate on time without transfer credit.\n";
+		else if(neededNumberOfSemesters >= semestersToGraduate)
+			warning += "It appears that you will not be able to take this course in order" + 
+		               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
+	}
+
+	warning += "You appear to need a total of " + relatedCreditsNeeded + " related requirement credit(s) for your major.\n\n";
 
 	return warning;
 }
