@@ -1,3 +1,8 @@
+Major courses in progress
+=========================
+Currently math major requirements mostly work if Math is specified as first major; related requirements not yet included.
+What's said about the number of semesters you'll need to complete to get the course doesn't quite yet work either; I plan to fix this later.
+
 Some Immediate Needs
 =====
 (*) The user interface needs to be made more intuitive, and it could use a better design.  I'm thinking that we change to a 1-column layout in which the user is guided through a series of collapsing/expanding sections and the recommendations are given at the end of the process.  This will make it more mobile-friendly as well.
