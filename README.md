@@ -1,3 +1,13 @@
+Some Immediate Needs
+=====
+(*) The user interface needs to be made more intuitive, and it could use a better design.  I'm thinking that we change to a 1-column layout in which the user is guided through a series of collapsing/expanding sections and the recommendations are given at the end of the process.  This will make it more mobile-friendly as well.
+
+(*) Courses that the student chooses to take need to be processed.
+
+(*) Needed credits warning should account for situations in which e.g., the number of credits required for general education is greater than the overall number of credits required
+
+(*) Add some major/minor requirements.
+
 New Name: DIGICAP web app
 =========================
 NOTE: To more accurately reflect the application's purpose, I'm renaming it DIGICAP (Discussion Information Guide In Charting Academic Progress).  The objective is to generate potentially important topics of discussion for the advisor to have with the student.  It is *NOT* intended as a replacement for the advising process.
@@ -11,14 +21,6 @@ Welcome student to the advisement project!  I'm so glad that you're taking the t
 Current Features
 =====
 Based on planned graduation and course history, the application will tell you if you're on pace to graduate in terms of number of total and LAS credits required.  It'll also tell you your remaining general education requirements.
-
-
-Some Immediate Needs
-=====
-The user interface needs to be made more intuitive, and it could use a better design.
-Courses that the student chooses to take needs to be processed.
-Needed credits warning should account for situations in which e.g., the number of credits required for general education is greater than the overall number of credits required
-Add some major/minor requirements.
 
 
 Files
