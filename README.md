@@ -1,7 +1,6 @@
 Major courses in progress
 =========================
-Currently math major requirements mostly work if Math is specified as first major; related requirements not yet included.
-What's said about the number of semesters you'll need to complete to get the course doesn't quite yet work either; I plan to fix this later.
+Currently math major and related requirements mostly work.  It may say you need to take the course this semester when it actually means that you need to take the course the first chance you get.
 
 Some Immediate Needs
 =====
