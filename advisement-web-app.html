@@ -35,7 +35,8 @@
 				{
 					var responseItem = responseItems[i];
 					if(responseItem)
-						responseHTML += "\t<li>" + responseItem + "</li>\n";
+						responseHTML += "\t<li>" + responseItem.split("\n").join("<BR>\n") + "</li>\n"; 
+						// Nice way to replace all (http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript)
 				}
 				responseHTML += "</ol>";
 				document.getElementById('suggestion-box').innerHTML = responseHTML;
