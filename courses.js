@@ -277,4 +277,11 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 				};
 		}
 	}
+
+	return {
+		title:"Course Not Found",
+		prerequisites:[],
+		credits:3,
+		offered:15
+	};
 }
