@@ -88,13 +88,17 @@ function getCourseItems(courseHistoryItems, courseList, criteriaFunction)
 	return courseItems;
 }
 
-function generateCourseCodeList(courseItems)
+function generateCourseCodeList(courseItems, criteriaFunction)
 {
-	// generates list of course codes from courseItems
+	// generates list of course codes from courseItems that meet the optionally supplied criteriaFunction
 	var courseCodes = [];
 	for(var i = 0; i < courseItems.length; i++)
 	{
-		courseCodes.push(courseItems[i].courseAreaCode + "  " + courseItems[i].courseNumber);
+		if(!criteriaFunction || criteriaFunction(courseItems[i]))
+		{
+			// only add if it meets criteriaFunction or no criteriaFunction was supplied
+			courseCodes.push(courseItems[i].courseAreaCode + "  " + courseItems[i].courseNumber);
+		}
 	}
 
 	return courseCodes;
@@ -495,7 +499,10 @@ function generateAdvice(courseInput)
 		});
 
 	var majorMinorWarning = getMajorMinorWarning(majorMinorCourseRequirements, courseInput.semestersToGraduate, 
-		                                         generateCourseCodeList(courseHistoryItems));
+		                                         generateCourseCodeList(courseHistoryItems, 
+		                                         	function(courseItem) {
+		                                         		return passGradeList.indexOf(courseItem.grade) != -1 || courseItem.grade == "WIP";
+		                                         	}));
 	//alert(earnedCreditCount);
 	var creditWarning = getCreditWarning(earnedCreditCount+creditsInProgress, courseInput.semestersToGraduate);
 	var genEdWarning = getGenEdWarning(courseHistoryItems);
