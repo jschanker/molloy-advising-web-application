@@ -2,9 +2,9 @@ Major courses in progress
 =========================
 Currently math major and related requirements mostly work.  It may not warn you about a course for which you passed but received a C- or less that will not be offered again before you graduate.  Similarly, it takes D to be an acceptable grade for satisfying the prerequisite.  Nevertheless, it'll still mention that you need to take the course in this case.
 
-It may also mention that you need the same related requirement twice or that you need a course for which you've taken.  This happens when there are a choice of courses.
+It may also mention that you need the same related requirement twice or that you need a course that you've already taken.  This happens when there is a choice of courses.
 
-There may also be a problem with not counting transfer credits.
+There may also be a problem with not counting transfer courses for requirements.
 
 Some Immediate Needs
 =====
