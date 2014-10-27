@@ -53,7 +53,8 @@ function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction)
 		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) 
 			&& courseCodes.indexOf(courseCode) == -1)
 		{
-			courseCodes.push(courseCode); // add course so it's not double counted
+			if(courseHistoryItems[i].grade != "Transfer")
+				courseCodes.push(courseCode); // add course so it's not double counted unless it's transfer credit
 			var courseCredits = parseFloat(courseHistoryItems[i].credits);
 			if(courseCredits > 0)
 			{ // Patch to fix bug in which courseCredits = -1 because not actual course (e.g., Transfer)
@@ -79,7 +80,8 @@ function getCourseItems(courseHistoryItems, courseList, criteriaFunction)
 		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) 
 			&& courseCodes.indexOf(courseCode) == -1)
 		{
-			courseCodes.push(courseCode); // add course so it's not double counted
+			if(courseHistoryItems[i].grade != "Transfer")
+				courseCodes.push(courseCode); // add course so it's not double counted unless it's transfer
 			courseItems.push(courseHistoryItems[i]);
 		}
 	}
@@ -187,13 +189,14 @@ function getNeededGenEdRequirements(courseHistoryItems)
 					{
 						numOfCoursesFromCategoryNeeded--;
 						coursesCountedForArea++;
-						coursesCounted.push(courseDesignation);
+						if(courseItems[k].grade != "Transfer")
+							coursesCounted.push(courseDesignation); // Don't worry about double counting transfer courses
 					}
 					if(creditsCountedForArea < neededCreditsPerArea)
 					{
 						creditsCountedForArea += creditsCountedFromCourse;
 						numOfCreditsFromCategoryNeeded -= creditsCountedFromCourse;
-						if(coursesCounted.indexOf(courseDesignation) == -1)
+						if(coursesCounted.indexOf(courseDesignation) == -1 && courseItems[k].grade != "Transfer")
 							coursesCounted.push(courseDesignation);
 					}
 				}
@@ -413,12 +416,14 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 
 		majorCreditsNeeded += parseFloat(credits);
 		warning += area + "  " + code + "  " + title + " \n";
-		if(neededNumberOfSemesters == semestersToGraduate)
-			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
-		               " to graduate on time without transfer credit.\n";
-		else if(neededNumberOfSemesters >= semestersToGraduate)
+
+		if(neededNumberOfSemesters > semestersToGraduate)
 			warning += "It appears that you will not be able to take this course in order" + 
 		               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
+
+		else if(getCourseDepth(area, code, 2, courseHistoryCodes, MAX_COURSE_DEPTH)-1 > semestersToGraduate)
+			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
+		               " to graduate on time without transfer credit.\n";
 	}
 
 	warning += "You appear to need a total of " + majorCreditsNeeded + " major requirement credit(s) for your major.\n\n";
@@ -436,12 +441,13 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 
 		relatedCreditsNeeded += parseFloat(credits);
 		warning += area + "  " + code + "  " + title + " \n";
-		if(neededNumberOfSemesters == semestersToGraduate)
-			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
-		               " to graduate on time without transfer credit.\n";
-		else if(neededNumberOfSemesters >= semestersToGraduate)
+		if(neededNumberOfSemesters > semestersToGraduate)
 			warning += "It appears that you will not be able to take this course in order" + 
 		               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
+
+		else if(getCourseDepth(area, code, 2, courseHistoryCodes, MAX_COURSE_DEPTH)-1 > semestersToGraduate)
+			warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
+		               " to graduate on time without transfer credit.\n";
 	}
 
 	warning += "You appear to need a total of " + relatedCreditsNeeded + " related requirement credit(s) for your major.\n\n";
