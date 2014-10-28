@@ -1,5 +1,3 @@
-function getLASCodes()
-{
 	var LASString = "Liberal Arts & Science Courses as of 3.7.14"+ 
 	"Course,Title,Degree Audit Code"+ 
 	"\nARA  101,Beginning Arabic I,ARA101"+
@@ -958,6 +956,13 @@ function getLASCodes()
 	"\nTHE  ETHC,Theology/Ethics General Ed,THEETHC"+
 	"\nTHE  GNED,Theology General Ed,THEGNED"+
 	"\nTHE  MAJR,Theology Major,THEMAJR";
+
+function getLASString(){
+    return LASString;
+}
+function getLASCodes()
+{
+
 
 	var LASCourses = LASString.split("\n");
 	var LASCodes = [];
