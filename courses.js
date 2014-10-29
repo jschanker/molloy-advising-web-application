@@ -14,6 +14,207 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:3,
 					offered:15
 				};
+			case 126:
+				return {
+					title: "General Biology I",
+					prerequisites:[],
+					credits:4,
+					offered:10
+				};
+			case 127:
+				return {
+					title: "General Biology II",
+					prerequisites:["BIO  126"],
+					credits:4,
+					offered:5
+				};
+			case 242:
+				return {
+					title: "Genetics",
+					prerequisites:["BIO  126"],
+					credits:4,
+					offered:5
+				}; // prereq or BIO 120
+			case 245:
+				return {
+					title: "Microbiology",
+					prerequisites:["BIO  127"],
+					credits:4,
+					offered:15
+				};
+			case 257:
+				return {
+					title: "Scientific Research Techniques",
+					prerequisites:[],
+					credits:2,
+					offered:10
+				};
+			case 465:
+				return {
+					title: "Field Experience In Biology I",
+					prerequisites:[],
+					credits:3,
+					offered:5
+				};
+			case 497:
+				return {
+					title: "Biology Seminar",
+					prerequisites:[],
+					credits:2,
+					offered:5
+				};
+		}
+	}
+	if(courseAreaCode == "BUS")
+	{
+		switch(codeNumber)
+		{
+			case 101:
+				return {
+					title: "Introduction to Business",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 240:
+				return {
+					title: "Business Law I",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 260:
+				return {
+					title: "Accounting I",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 261:
+				return {
+					title: "Accounting II",
+					prerequisites:["BUS  260"],
+					credits:3,
+					offered:15
+				};
+			case 301:
+				return {
+					title: "Principles of Management",
+					prerequisites:["BUS  101"],
+					credits:3,
+					offered:15
+				};
+			case 303:
+				return {
+					title: "Human Resources Management",
+					prerequisites:["BUS  301"],
+					credits:3,
+					offered:15
+				};
+			case 304:
+				return {
+					title: "Organizational Behavior",
+					prerequisites:["BUS  301"],
+					credits:3,
+					offered:15
+				};
+			case 307:
+				return {
+					title: "Sustainable Business",
+					prerequisites:[],
+					credits:3,
+					offered:5
+				};
+			case 330:
+				return {
+					title: "Principles of Marketing",
+					prerequisites:["BUS  101"],
+					credits:3,
+					offered:15
+				};
+			case 334:
+				return {
+					title: "International Business",
+					prerequisites:["BUS  101", "ECO  251"],
+					credits:3,
+					offered:15
+				}; // or ECO 252 prereq to pair with 251
+			case 343:
+				return {
+					title: "Quantitative Analysis for Business Applications",
+					prerequisites:["CIS  105", "MAT  129"],
+					credits:3,
+					offered:15
+				};
+			case 350:
+				return {
+					title: "Corporate Finance",
+					prerequisites:["BUS  343"],
+					credits:3,
+					offered:15
+				};
+			case 389:
+				return {
+					title: "Fundamental Analysis and Company Valuation",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 460:
+				return {
+					title: "Business Internship",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 460:
+				return {
+					title: "Business Internship",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 484:
+				return {
+					title: "Strategic Management",
+					prerequisites:["BUS  101", "BUS  301", "BUS  330", "BUS  350"],
+					credits:3,
+					offered:10
+				};
+			case 490:
+				return {
+					title: "Management And Finance Capstone",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+			case 900:
+				return {
+					title: "Elective - may already have",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+		}
+	}
+	if(courseAreaCode == "CHE")
+	{
+		switch(codeNumber)
+		{
+			case 132:
+				return {
+					title: "Inorganic Chemistry I",
+					prerequisites:[],
+					credits:4,
+					offered:10
+				};
+			case 133:
+				return {
+					title: "Inorganic Chemistry II",
+					prerequisites:["CHE  132"],
+					credits:5,
+					offered:5
+				};
 		}
 	}
 	if(courseAreaCode == "CIS")
@@ -27,12 +228,26 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:3,
 					offered:15
 				};
+			case 105:
+				return {
+					title: "Computer Applications for Business",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
 			case 235:
 				return {
 					title: "",
 					prerequisites:[],
 					credits:3,
 					offered:15
+				};
+			case 360:
+				return {
+					title: "Computer Information Systems In Business",
+					prerequisites:[],
+					credits:3,
+					offered:4
 				};
 		}
 	}
@@ -63,16 +278,96 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 				};
 		}
 	}
+	if(courseAreaCode == "COM")
+	{
+		switch(codeNumber)
+		{
+			case 229:
+				return {
+					title: "Experiences in Corporate Communications",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+		}
+	}
+	if(courseAreaCode == "ECO")
+	{
+		switch(codeNumber)
+		{
+			case 251:
+				return {
+					title: "Macroeconomics",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 252:
+				return {
+					title: "Microeconomics",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 315:
+				return {
+					title: "Money, Banking, and Financial Markets",
+					prerequisites:["ECO  251", "BUS  343"],
+					credits:3,
+					offered:15
+				}; // ECO 252 instead of ECO 251 also
+			case 320:
+				return {
+					title: "International Economics",
+					prerequisites:["ECO  315"],
+					credits:3,
+					offered:15
+				}; // ECO 252 instead of ECO 251 also
+		}
+	}
+	if(courseAreaCode == "ENG")
+	{
+		switch(codeNumber)
+		{
+			case 110:
+				return {
+					title: "College Composition",
+					prerequisites:[],
+					credits:1,
+					offered:15
+				};
+			case 238:
+				return {
+					title: "Techniques of Business Writing",
+					prerequisites:["ENG  110"],
+					credits:1,
+					offered:15
+				};
+		}
+	}
 	if(courseAreaCode == "ESC")
 	{
 		switch(codeNumber)
 		{
 			case 115:
 				return {
-					title: "Basic Human Biology",
+					title: "Astronomy",
 					prerequisites:[],
 					credits:3,
 					offered:10
+				};
+		}
+	}
+	if(courseAreaCode == "ETH")
+	{
+		switch(codeNumber)
+		{
+			case 257:
+				return {
+					title: "Business Ethics",
+					prerequisites:[],
+					credits:3,
+					offered:15
 				};
 		}
 	}
@@ -107,6 +402,13 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					prerequisites:[],
 					credits:3,
 					offered:5
+				};
+			case 129:
+				return {
+					title: "Elementary Statistics for Business",
+					prerequisites:[],
+					credits:3,
+					offered:15
 				};
 			case 221:
 				return {
