@@ -18,3 +18,24 @@ function getMATMajorRequirements()
 		    relatedCodes: relatedCodes
 	};
 }
+
+function getMATAdEdMajorRequirements()
+{
+	var majorName = "MAT";
+	var majorCodeNumbers = [[115,225],[221],[222],[223],[229],[232],[251],[320],[330],
+	                  [491],[331,335,336,342,347,356,361,390]];
+	var relatedCodes = [["CSC  103", "CSC  235"], ["PSY  206"], 
+	                    ["PHY  270", "PHY  271", "BIO  110", "ESC  115", "BIO  112", "BIO  120", "BIO  121", "BIO  126", "BIO  127", 
+	                     "BIO  150", "BIO  151", "BIO  280H", "CHE  103", "CHE  112", "CHE  132", "CHE  133", 
+	                     "ESC  125", "ESC  127", "ESC  130", "PHY  271", "BIO  GEDL", "CHE  GEDL", "ENV  GEDL", "ESC  GEDL", 
+	                     "PHY  GEDL", "SCIMET1", "SCIMET2"],
+	                    ["PHY  270", "PHY  271", "BIO  110", "ESC  115", "BIO  112", "BIO  120", "BIO  121", "BIO  126", "BIO  127", 
+	                     "BIO  150", "BIO  151", "BIO  280H", "CHE  103", "CHE  112", "CHE  132", "CHE  133", 
+	                     "ESC  125", "ESC  127", "ESC  130", "PHY  271", "BIO  GEDL", "CHE  GEDL", "ENV  GEDL", "ESC  GEDL", 
+	                     "PHY  GEDL", "SCIMET1", "SCIMET2"]]; // PSY 206 should be in gen ed
+
+	return {majorName: majorName,
+		    majorCodeNumbers: majorCodeNumbers,
+		    relatedCodes: relatedCodes
+	};
+}
