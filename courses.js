@@ -179,21 +179,21 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					title: "Strategic Management",
 					prerequisites:["BUS  101", "BUS  301", "BUS  330", "BUS  350"],
 					credits:3,
-					offered:10
+					offered:15
 				};
 			case 490:
 				return {
 					title: "Management And Finance Capstone",
 					prerequisites:[],
 					credits:3,
-					offered:10
+					offered:15
 				};
 			case 900:
 				return {
 					title: "Elective - may already have",
 					prerequisites:[],
 					credits:3,
-					offered:10
+					offered:15
 				};
 		}
 	}
@@ -251,6 +251,26 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 				};
 		}
 	}
+		if(courseAreaCode == "COM")
+	{
+		switch(codeNumber)
+		{
+			case 229:
+				return {
+					title: "Experiences in Corporate Communications",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 239:
+				return {
+					title: "Public Speaking for Business",
+					prerequisites:[],
+					credits:1,
+					offered:15
+				};
+		}
+	}
 	if(courseAreaCode == "CSC")
 	{
 		switch(codeNumber)
@@ -278,19 +298,7 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 				};
 		}
 	}
-	if(courseAreaCode == "COM")
-	{
-		switch(codeNumber)
-		{
-			case 229:
-				return {
-					title: "Experiences in Corporate Communications",
-					prerequisites:[],
-					credits:3,
-					offered:15
-				};
-		}
-	}
+
 	if(courseAreaCode == "ECO")
 	{
 		switch(codeNumber)
@@ -559,6 +567,19 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 				};
 		}
 	}
+	if(courseAreaCode == "PED")
+	{
+		switch(codeNumber)
+		{
+			case 125:
+				return {
+					title: "Programming Fitness Activities",
+					prerequisites:[],
+					credits:1,
+					offered:15
+				};
+		}
+	}
 	if(courseAreaCode == "PHY")
 	{
 		switch(codeNumber)
@@ -577,6 +598,26 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:4,
 					offered:10
 				};
+		}
+	}
+	if(courseAreaCode == "PSY")
+	{
+		switch(codeNumber)
+		{
+			case 111:
+				return {
+					title: "General Psychology",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+			case 206:
+				return {
+					title: "Adolescent Psychology, Pre-Adolescence Through Adolescence",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				}; // PSY 111 prerequisite but not used
 		}
 	}
 
