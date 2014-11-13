@@ -71,7 +71,7 @@
 							<label for = "first-major-select">
 								First Major:
 							</label>
-							<select class="form-control">
+							<select name = "first-major" id = "first-major-select" class="form-control">
 								<!--<option value = "csc">B.A. Computer Science</option>-->
 								<option value = "bio">B.S. Biology (Core only - in progress)</option>
 								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
@@ -124,9 +124,7 @@
 							<label for = "course-box">
 								Planned Courses:
 							</label>
-							<textarea DISABLED name = "courses" id = "course-box" class = "form-control">
-								NOT YET IMPLEMENTED.
-							</textarea>
+							<textarea DISABLED name = "courses" id = "course-box" class = "form-control">NOT YET IMPLEMENTED</textarea>
 						</div>
 						<label for = "suggestion-box">
 							Suggestions/Warnings:
@@ -153,7 +151,8 @@
 							</label> 
 							(Select all (Ctrl+A) from Course History on Lions Den, Copy (Ctrl+C), and Paste (Ctrl+V) below):
 						</p>
-						<textarea class = "form-control" name = "course-history" id = "course-history-box"></textarea>
+						<textarea class = "form-control" name = "course-history" id = "course-history-box">
+						</textarea>
 					</div>
 				</div>
 				<div class = "row">
