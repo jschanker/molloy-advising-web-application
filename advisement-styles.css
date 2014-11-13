@@ -4,31 +4,14 @@ body
 	font-family:verdana,arial,sans-serif;
 }
 
-#formTblContainer
+#course-history-box
 {
-	display:table;
-	background-color:maroon;
-	border: 1px solid black;
-	padding: 0px 5px 0px 5px;
-	border-spacing:5px;
-
+	min-height: 510px;
 }
 
-#leftPanelTblCell
+#submitButton
 {
-	display:table-cell;
-	vertical-align:top;
-}
-
-#courseHistoryTblCell
-{
-	display:table-cell;
-	vertical-align:top;
-}
-
-#formTblRow
-{
-	display:table-row;
+	padding: 10px;
 }
 
 #suggestion-box
@@ -38,5 +21,4 @@ body
 	height:150px;
 	overflow:auto;
 	overflow-x:hidden;
-	font-size:80%;
 }

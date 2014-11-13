@@ -1,13 +1,16 @@
-<!doctype html>
-
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
-		<title>DIGICAP | Molloy Advisement Web Application</title>
 		<meta charset = "utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		
+		<title>DIGICAP | Molloy Advisement Web Application</title>
 		
 		<!-- Bootstrap -->
-		<link href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
+		<link href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css" rel="stylesheet">
 		
+		<!-- CSS -->
 		<link type = "text/css" rel = "stylesheet" href = "advisement-styles.css">
 		
 		<script src = "las-requirements.js"></script>
@@ -53,69 +56,87 @@
 		</script>
 	</head>
 	<body>
-		<div class="page-header">
-			<h1>DIGICAP 
-				<small>
-					Molloy Advisement Web Application
-				</small>
-			</h1>
-		</div>
-		<form>
-			<div id = "formTblContainer">
-				<div id = "formTblRow">
-					<div id = "leftPanelTblCell">
-						<p><label for = "first-major-select">First Major:</label></p>
-						<p>
-							<SELECT name = "first-major" id = "first-major-select">
-								<!--<OPTION value = "csc">B.A. Computer Science</OPTION>-->
-								<OPTION value = "bio">B.S. Biology (Core only - in progress)</OPTION>
-								<OPTION value = "bus-mgmt">B.S. Business Management (in progress)</OPTION>
-								<OPTION value = "mat">B.A. Mathematics</OPTION>
-								<OPTION value = "mat-ed-adult">B.A. Mathematics - Adolescence Education (in progress - math only)</OPTION>
-								<!--<OPTION value = "cis">B.S. Computer Information Systems</OPTION>-->
-								<OPTION value = "other">Other</OPTION>
-							</SELECT>
-						</p>
-						<p><label for = "second-major-select">Second Major:</label></p>
-						<p>
-							<SELECT name = "second-major" id = "second-major-select">
-								<!--<OPTION value = "csc">B.A. Computer Science</OPTION>
-								<OPTION value = "mat">B.A. Mathematics</OPTION>
-								<OPTION value = "cis">B.S. Computer Information Systems</OPTION>-->
-								<OPTION value = "none" SELECTED>None</OPTION>
-								<!--<OPTION value = "other">Other</OPTION>-->
-							</SELECT>
-						</p>
-						<p><label for = "minor-select">Minor:</label></p>
-						<p>
-							<SELECT name = "minor" id = "minor-select">
-								<!--<OPTION value = "csc">B.A. Computer Science</OPTION>
-								<OPTION value = "mat">B.A. Mathematics</OPTION>
-								<OPTION value = "cis">B.S. Computer Information Systems</OPTION>-->
-								<OPTION value = "none" SELECTED>None</OPTION>
-								<!--<OPTION value = "other">Other</OPTION>-->
-							</SELECT>
-						</p>
-						<p><label for = "graduation-select">Planned Graduation:</label></p>
-						<p>
-							<SELECT name = "graduation" id = "graduation-select">
-								<OPTION value = "1">Spring 2015 (Senior)</OPTION>
-								<OPTION value = "2">Fall 2015</OPTION>
-								<OPTION value = "3">Spring 2016 (Junior)</OPTION>
-								<OPTION value = "4">Fall 2016</OPTION>
-								<OPTION value = "5">Spring 2017 (Sophmore)</OPTION>
-								<OPTION value = "6">Fall 2017</OPTION>
-								<OPTION value = "7">Spring 2018 (Freshman)</OPTION>
-								<OPTION value = "8">Fall 2018</OPTION>
-								<OPTION value = "9">Spring 2019 (Freshman in 5-year)</OPTION>
-							</SELECT>
-						</p>
-						<p><label for = "course-box">Planned Courses:</label></p>
-						<p><TEXTAREA DISABLED name = "courses" id = "course-box" rows = "8" cols = "50">NOT YET IMPLEMENTED.</TEXTAREA></p>
-						<p><label for = "suggestion-box">Suggestions/Warnings:</label></p>
-						<!--<p><TEXTAREA name = "suggestions" id = "suggestion-box" rows = "10" cols = "50"></TEXTAREA></p>-->
+		<div class="container">
+			<div class="page-header">
+				<h1>DIGICAP 
+					<small>
+						Molloy Advisement Web Application
+					</small>
+				</h1>
+			</div>
+			<form role = "form">
+				<div class = "row">
+					<div class = "col-md-6">
+						<div class = "form-group">
+							<label for = "first-major-select">
+								First Major:
+							</label>
+							<select class="form-control">
+								<!--<option value = "csc">B.A. Computer Science</option>-->
+								<option value = "bio">B.S. Biology (Core only - in progress)</option>
+								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
+								<option value = "mat">B.A. Mathematics</option>
+								<option value = "mat-ed-adult">B.A. Mathematics - Adolescence Education (in progress - math only)</option>
+								<!--<option value = "cis">B.S. Computer Information Systems</option>-->
+							</select>
+						</div>
+						<div class = "form-group">
+							<label for = "second-major-select">
+								Second Major:
+							</label>
+							<select name = "second-major" id = "second-major-select" class = "form-control">
+								<!--<option value = "csc">B.A. Computer Science</option>
+								<option value = "mat">B.A. Mathematics</option>
+								<option value = "cis">B.S. Computer Information Systems</option>-->
+								<option value = "none" SELECTED>None</option>
+								<!--<option value = "other">Other</option>-->
+							</select>
+						</div>
+						<div class = "form-group">
+							<label for = "minor-select">
+								Minor:
+							</label>
+							<select name = "minor" id = "minor-select" class = "form-control">
+								<!--<option value = "csc">B.A. Computer Science</option>
+							<option value = "mat">B.A. Mathematics</option>
+							<option value = "cis">B.S. Computer Information Systems</option>-->
+							<option value = "none" SELECTED>None</option>
+							<!--<option value = "other">Other</option>-->
+							</select>
+						</div>									
+						<div class = "form-group">
+							<label for = "graduation-select">
+								Planned Graduation:
+							</label>
+							<select name = "graduation" id = "graduation-select" class = "form-control">
+								<option value = "1">Spring 2015 (Senior)</option>
+								<option value = "2">Fall 2015</option>
+								<option value = "3">Spring 2016 (Junior)</option>
+								<option value = "4">Fall 2016</option>
+								<option value = "5">Spring 2017 (Sophmore)</option>
+								<option value = "6">Fall 2017</option>
+								<option value = "7">Spring 2018 (Freshman)</option>
+								<option value = "8">Fall 2018</option>
+								<option value = "9">Spring 2019 (Freshman in 5-year)</option>
+							</select>
+						</div>									
+						<div class = "form-group">
+							<label for = "course-box">
+								Planned Courses:
+							</label>
+							<textarea DISABLED name = "courses" id = "course-box" class = "form-control">
+								NOT YET IMPLEMENTED.
+							</textarea>
+						</div>
+						<label for = "suggestion-box">
+							Suggestions/Warnings:
+						</label>
 						<div id = "suggestion-box">
-							<SPAN STYLE = "color:#000000;font-weight:bold;">Information will appear here.  Note: If you're using certain older browsers, it may not appear properly.<BR>
+							Information will appear here. 
+							<br> 
+							<br> 
+							Note: If you're using certain older browsers, it may not appear properly.
+							<br>
 							<!--Information will appear here.<BR>
 							Information will appear here.<BR>
 							Information will appear here.<BR>
@@ -124,14 +145,25 @@
 							Information will appear here.<BR>
 							Information will appear here.<BR>-->
 						</div>
-						<p><input type = "button" value = "Get Advice!" onClick = "generateReport()"></p>
-					</div>
-					<div id = "courseHistoryTblCell">
-						<p><label for = "course-history-box">Course History</label> (Select all (Ctrl+A) from Course History on Lions Den, Copy (Ctrl+C), and Paste (Ctrl+V) below):</p>
-						<p><TEXTAREA name = "course-history" id = "course-history-box" rows = "50" cols = "75"></TEXTAREA></p>
+					</div>								
+					<div class = "col-md-6">
+						<p>
+							<label for = "course-history-box">
+								Course History
+							</label> 
+							(Select all (Ctrl+A) from Course History on Lions Den, Copy (Ctrl+C), and Paste (Ctrl+V) below):
+						</p>
+						<textarea class = "form-control" name = "course-history" id = "course-history-box"></textarea>
 					</div>
 				</div>
-			</div>
-		</form>
+				<div class = "row">
+					<div class = "form-group">
+						<div class = "col-md-6 col-md-offset-3" id = "submitButton">
+							<input class = "form-control" type = "button" value = "Get Advice!" onClick = "generateReport()">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
 	</body>
 </html>
