@@ -4,6 +4,17 @@ body
 	font-family:verdana,arial,sans-serif;
 }
 
+form
+{
+	background-color: maroon;
+	color:#FFFFFF;
+}
+
+form .row
+{
+	padding: 10px;
+}
+
 #course-history-box
 {
 	min-height: 510px;
@@ -22,4 +33,5 @@ body
 	height:150px;
 	overflow:auto;
 	overflow-x:hidden;
+	color:#000000;
 }
