@@ -9,6 +9,7 @@ form
 	background-color: #981E32;
 	font-family:"Chalkboard", "Comic Sans MS", sans-serif;
 	color:#FFFFFF;
+	border-radius:10px;
 }
 
 form .row
@@ -35,4 +36,5 @@ form .row
 	overflow:auto;
 	overflow-x:hidden;
 	color:#000000;
+	border-radius:5px;
 }
