@@ -38,3 +38,25 @@ form .row
 	color:#000000;
 	border-radius:5px;
 }
+
+.color-changer-control
+{
+	float:right;
+}
+
+.change-color-button
+{
+	border:2px solid black;
+	padding:2px;
+	width:10%;
+}
+
+#whiteFormButton
+{
+	background-color:#CCCCCC;
+}
+
+#lightMaroonFormButton
+{
+	background-color:#981E32;
+}
