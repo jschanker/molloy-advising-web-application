@@ -55,6 +55,11 @@
 				//alert(responseHTML);
 				//parseCourseHistory(document.getElementById('course-history-box').value);
 			}
+			function changeTextAndBackgroundColors(textColor, bgColor)
+			{
+				document.getElementById("mainForm").style.color = textColor;
+				document.getElementById("mainForm").style.backgroundColor = bgColor;
+			}
 		</script>
 	</head>
 	<body>
@@ -65,8 +70,19 @@
 						Molloy Advisement Web Application
 					</small>
 				</h1>
+				<div class = "color-changer-control">
+					<span class = "change-color-button" id = "whiteFormButton" onClick = "changeTextAndBackgroundColors('#000000', '#CCCCCC')">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<span class = "change-color-button" id = "lightMaroonFormButton" onClick = "changeTextAndBackgroundColors('#FFFFFF', '#981E32')">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<!--<span class = "change-color-button">&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<span class = "change-color-button">&nbsp;&nbsp;&nbsp;&nbsp;</span>-->
+				</div> 
+				<!--<p>-->
+					<xsmall>
+						<em>Discussion Information Guide for Charting Academic Progress</em>
+					</xsmall>
+				<!--</p>-->
 			</div>
-			<form role = "form">
+			<form role = "form" id = "mainForm">
 				<div class = "row">
 					<div class = "col-md-6">
 						<div class = "form-group">
