@@ -51,12 +51,22 @@ form .row
 	width:10%;
 }
 
-#whiteFormButton
+#silverFormButton
 {
 	background-color:#CCCCCC;
+}
+
+#whiteFormButton
+{
+	background-color:#EEEEEE;
 }
 
 #lightMaroonFormButton
 {
 	background-color:#981E32;
+}
+
+#maroonFormButton
+{
+	background-color:#800000;
 }
