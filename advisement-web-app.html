@@ -60,6 +60,12 @@
 				document.getElementById("mainForm").style.color = textColor;
 				document.getElementById("mainForm").style.backgroundColor = bgColor;
 			}
+			function removeDuplicateMajor()
+			{
+				if(document.getElementById("first-major-select").value == document.getElementById("second-major-select").value) {
+					document.getElementById("second-major-select").options[0].selected = 'selected';
+				}
+			}
 		</script>
 	</head>
 	<body>
@@ -91,7 +97,7 @@
 							<label for = "first-major-select">
 								First Major:
 							</label>
-							<select name = "first-major" id = "first-major-select" class="form-control">
+							<select name = "first-major" id = "first-major-select" class="form-control" onChange = "removeDuplicateMajor()">
 								<!--<option value = "csc">B.A. Computer Science</option>-->
 								<option value = "bio">B.S. Biology (Core only - in progress)</option>
 								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
@@ -104,11 +110,15 @@
 							<label for = "second-major-select">
 								Second Major:
 							</label>
-							<select name = "second-major" id = "second-major-select" class = "form-control">
+							<select name = "second-major" id = "second-major-select" class = "form-control" onChange = "removeDuplicateMajor()">
 								<!--<option value = "csc">B.A. Computer Science</option>
 								<option value = "mat">B.A. Mathematics</option>
 								<option value = "cis">B.S. Computer Information Systems</option>-->
 								<option value = "none" SELECTED>None</option>
+								<option value = "bio">B.S. Biology (Core only - in progress)</option>
+								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
+								<option value = "mat">B.A. Mathematics</option>
+								<option value = "mat-ed-adult">B.A. Mathematics - Adolescence Education (in progress - math only)</option>
 								<!--<option value = "other">Other</option>-->
 							</select>
 						</div>
