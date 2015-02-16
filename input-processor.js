@@ -39,32 +39,103 @@ function getCommonElement(arr1, arr2)
 	return "";
 }
 
-function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction)
-{
-	// returns the total number of credits for courses taken in courseList
-	// that meet the given criteriaFunction
-
-	var credits = 0;
-	var courseCodes = [];
-
-	for(var i = 0; i < courseHistoryItems.length; i++)
-	{
-		var courseCode = courseHistoryItems[i].courseAreaCode + "  " + courseHistoryItems[i].courseNumber;
-		if( courseList.indexOf(courseCode) != -1 && criteriaFunction(courseHistoryItems[i]) 
-			&& courseCodes.indexOf(courseCode) == -1)
-		{
-			if(courseHistoryItems[i].grade != "Transfer")
-				courseCodes.push(courseCode); // add course so it's not double counted unless it's transfer credit
-			var courseCredits = parseFloat(courseHistoryItems[i].credits);
-			if(courseCredits > 0)
-			{ // Patch to fix bug in which courseCredits = -1 because not actual course (e.g., Transfer)
-			  // There's still a problem here: when course is listed twice but still counted (Transfer credit)
-				credits += courseCredits;
-			}
-		}
-	}
-	return credits;
+function getCourseCode(courseItem) {
+	return courseItem.courseAreaCode + "  " + courseItem.courseNumber;
 }
+
+
+function isCourseItemInItemList(courseItem, courseItemList) {
+	return isCourseItemInList(courseItem, courseItemList.map(function(courseListItem) {
+		return getCourseCode(courseListItem);
+	}));
+}
+
+function isCourseItemInList(courseItem, courseList) {
+	return courseList.indexOf(getCourseCode(courseItem)) != -1;
+}
+
+function isCourseItemNotInList(courseList, courseItem) {
+	return !isCourseItemInList(courseItem, courseList);
+}
+
+function isCourseItemNotInItemList(courseList, courseItem) {
+	return !isCourseItemInItemList(courseItem, courseList);
+}
+
+function removeCourseItemFromList(courseItemList, courseItem) {
+	var courseCodes = courseItemList.map(function(courseListItem) {
+		return getCourseCode(courseListItem);
+	});
+	var indexInList = courseCodes.indexOf(getCourseCode(courseItem));
+	if(indexInList != -1) {
+		courseItemList.splice(indexInList, 1);
+	}
+}
+
+function isTransferCourse(courseItem) {
+	return courseItem.grade == "Transfer";
+}
+
+/*
+function removeInvalidCourseItems(courseItems) {
+	courseItems = courseItems.filter(function(courseItem) {
+		return parseFloat(courseItem.credits) >= 0;
+	});
+}
+*/
+
+function getCourseList(courseHistoryItems, courseList, criteriaFunction, duplicateFunction) {
+	// returns the array of courses taken in courseList of course codes
+	// that meet the given criteriaFunction, listing courses with equal 
+	// codes more than once only if duplicateFunction is met
+	var filteredCourseList = [];
+	courseHistoryItems.forEach(function(courseHistoryItem) {
+		
+		// Patch to fix bug in which courseCredits = -1 because not actual course (e.g., Spring 2015)
+		var isValidCourse = (parseFloat(courseHistoryItem.credits) >= 0);
+
+		var isInCourseList = !courseList || isCourseItemInList(courseHistoryItem, courseList); // default: all courses in list
+		var meetsCriteriaFunction = !criteriaFunction || criteriaFunction(courseHistoryItem); // default: all courses meet criteria
+		// default: only transfer courses double counted
+		var isDoubleCounted = 
+		  duplicateFunction ? duplicateFunction(courseHistoryItem) : isTransferCourse(courseHistoryItem);
+
+		if( isValidCourse && meetsCriteriaFunction && isInCourseList && 
+		    (!isCourseItemInItemList(courseHistoryItem, filteredCourseList) || isDoubleCounted) ) {
+		   		filteredCourseList.push(courseHistoryItem);
+		}
+	});
+	return filteredCourseList;
+}
+
+function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction, duplicateFunction) {
+	return getCourseList(courseHistoryItems, courseList, criteriaFunction, duplicateFunction)
+	       .reduce(function(totalSoFar, courseItem) {
+		    return totalSoFar + parseFloat(courseItem.credits);
+	       }, 0);
+}
+
+/*
+function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction, duplicateFunction) {
+	// returns the total number of credits for courses taken in courseList
+	// that meet the given criteriaFunction, double counting only if meets duplicateFunction
+
+	var countedCourseList = [];
+	//var total = 0;  
+	return courseHistoryItems.filter(function(courseHistoryItem) {
+		return criteriaFunction(courseHistoryItem) && isCourseItemInList(courseHistoryItem, courseList);
+	}).reduce(function(totalSoFar, courseHistoryItem) {
+		var numOfCredits = parseFloat(courseHistoryItem.credits);
+		if(( !isCourseItemInList(courseHistoryItem, countedCourseList) || (duplicateFunction && duplicateFunction(courseHistoryItem)) ) && numOfCredits > 0) {
+			// Patch to fix bug in which courseCredits = -1 because not actual course (e.g., Spring 2015)
+			countedCourseList.push(getCourseCode(courseHistoryItem));
+			return totalSoFar + numOfCredits;
+		} else {
+			return totalSoFar;
+		}
+	}, 0);
+}
+*/
 
 function getCourseItems(courseHistoryItems, courseList, criteriaFunction)
 {
@@ -151,13 +222,81 @@ function getLASCreditWarning(numOfLASCredits, semestersToGraduate)
 	return warning;
 }
 
+function getCountingGradeList(criteria) {
+	var gradeLists = {
+		PASSING_TRANS_WIP: ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer", "WIP"],
+		MAJOR_TRANS_WIP: ["A", "A-", "B+", "B", "B-", "C+", "C", "Transfer", "WIP"],
+		TRANSFER: ["Transfer"]
+	};
+	return gradeLists[criteria];
+}
+
+function generateMatchingGradeFunction(gradeList) {
+	return function(courseItem) {
+		return gradeList.indexOf(courseItem.grade) != -1;
+	}
+}
+
+function getNeededGenEdRequirements(courseHistoryItems) {
+	var genEdRequirements = getGenEdObject();
+	
+	var isCountingGradeFunc = generateMatchingGradeFunction( getCountingGradeList("PASSING_TRANS_WIP") );
+	//var isTransferFunc = generateMatchingGradeFunction( getCountingGradeList("TRANSFER") );
+	
+	//var unusedCountingCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeFunc, isTransferFunc);
+	var unusedCountingCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeFunc);
+
+	var categoriesAndCreditsNeeded = [];
+	//var coursesUsed = [];
+
+	// For now assume cross-listed courses are counted according to their current
+    // designation (e.g., HIS 213 counted as a history requirement and not as a Political Science
+    // requirement even though it's cross-listed as POL 213)
+	// NONINTELLIGENT: Doesn't try to apply "best" strategy to counting general education courses
+
+	// TODO: Look up cross-listed codes and find strategy for identifying best way to count courses toward each area
+
+	genEdRequirements.forEach(function(genEdCategory) {
+		var numOfCreditsFromCategoryNeeded = parseFloat(genEdCategory.totalCredits);
+		// assume each area is equally represented by credits in category
+		var maxCreditsPerArea = genEdCategory.totalCredits / genEdCategory.neededAreas;
+
+		genEdCategory.areas.forEach(function(area) {
+			//var unusedCoursesInArea = getCourseList(courseHistoryItems, area, isCourseItemNotInItemList.bind(undefined, coursesUsed));
+			var unusedCoursesInArea = getCourseList(unusedCountingCourses, area);
+			var areaCredits = 0;
+
+			unusedCoursesInArea.forEach(function(course) {
+				if(maxCreditsPerArea > areaCredits) {
+					areaCredits = Math.min(areaCredits + course.credits, maxCreditsPerArea);
+					removeCourseItemFromList(unusedCountingCourses, course);
+					//console.log(unusedCountingCourses.length +"\n");
+				}
+			});
+
+			numOfCreditsFromCategoryNeeded -= areaCredits;
+		});
+
+		if(numOfCreditsFromCategoryNeeded > 0)
+			categoriesAndCreditsNeeded.push({name: genEdCategory.name, credits:numOfCreditsFromCategoryNeeded});
+	});
+
+	return categoriesAndCreditsNeeded; 
+}
+
+/*
+
 function getNeededGenEdRequirements(courseHistoryItems)
 {
 	var genEdRequirements = getGenEdObject();
 	var numOfCategories = genEdRequirements.length;
-	var gradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer", "WIP"];
+	var isCountingGradeFunc = generateMatchingGradeFunction( getCountingGradeList("PASSING_TRANS_WIP") );
+	var isTransferFunc = generateMatchingGradeFunction( getCountingGradeList("TRANSFER") );
 	var categoriesAndCreditsNeeded = [];
-	var coursesCounted = [];
+	var countingCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeFunc, isTransferFunc);
+
+
+	//var coursesCounted = [];
 	//var historyCourseCodeList = generateCourseCodeList(courseHistoryItems);
 
     // For now assume cross-listed courses are counted according to their current
@@ -213,6 +352,8 @@ function getNeededGenEdRequirements(courseHistoryItems)
 
 	return categoriesAndCreditsNeeded;
 }
+
+*/
 
 function getGenEdWarning(courseHistoryItems)
 {
@@ -476,27 +617,29 @@ function generateAdvice(courseInput)
 		{
 			//return hasCommonElement(courseInfo, gradeList);
 			return passGradeList.indexOf(courseItem.grade) != -1; // passing grade in course
-		});
+		}, isTransferCourse);
 
 	var earnedCreditCount = getNumOfCredits(courseHistoryItems, generateCourseCodeList(courseHistoryItems), 
 		function(courseItem)
 		{
 			//return hasCommonElement(courseInfo, gradeList);
 			return courseItem.countsForCredit && passGradeList.indexOf(courseItem.grade) != -1; // passing grade in course, not remedial
-		});
+		}, isTransferCourse);
+
+	alert("Earned Credit Count: " + earnedCreditCount);
 
 	var creditsInProgress = getNumOfCredits(courseHistoryItems, generateCourseCodeList(courseHistoryItems), 
 		function(courseItem)
 		{
 			//return hasCommonElement(courseInfo, gradeList);
 			return courseItem.countsForCredit && courseItem.grade == "WIP"; // passing grade in course, not remedial
-		});
+		}, isTransferCourse);
 	var LASCreditsInProgress = getNumOfCredits(courseHistoryItems, LASCourseItems, 
 		function(courseItem)
 		{
 			//return hasCommonElement(courseInfo, gradeList);
 			return courseItem.countsForCredit && courseItem.grade == "WIP"; // passing grade in course, not remedial
-		});
+		}, isTransferCourse);
 
 	var majorMinorWarning = getMajorMinorWarning(majorMinorCourseRequirements, courseInput.semestersToGraduate, 
 		                                         generateCourseCodeList(courseHistoryItems, 
