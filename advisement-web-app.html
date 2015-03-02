@@ -23,6 +23,7 @@
 		<script src = "math-advice.js"></script>
 		<script src = "majors.js"></script>
 		<script src = "input-processor.js"></script>
+		<script src = "fall15-course-data.js"></script>
 		<script>
 			function generateReport()
 			{
@@ -66,9 +67,47 @@
 					document.getElementById("second-major-select").options[0].selected = 'selected';
 				}
 			}
+			function addCourseSelections()
+			{
+				var courses = JSON.parse(getCurrentCourses());
+				var coursesByArea = {};
+				courses.forEach(function(course) {
+					if(!(course.area in coursesByArea)) {
+						coursesByArea[course.area] = [course];
+					} else {
+						coursesByArea[course.area].push(course);
+					}
+				});
+
+				for(area in coursesByArea) {
+					var courseArea = document.createElement("OPTION");
+					courseArea.setAttribute("value", area);
+					courseArea.text = area;
+					document.getElementById("area-1").add(courseArea);
+				}
+
+				return coursesByArea;
+			}
+			function addCourseNumbers()
+			{
+				var coursesByArea = addCourseSelections();
+				for(var opt in document.getElementById("number-1").options) {
+					document.getElementById("number-1").remove(0);
+				}
+
+				var courseArea = document.getElementById("area-1");
+				var area = courseArea.options[courseArea.selectedIndex].value;
+
+				for(course in coursesByArea[area]) {
+					var courseNumber = document.createElement("OPTION");
+					courseNumber.setAttribute("value", coursesByArea[area][course].number);
+					courseNumber.text = coursesByArea[area][course].number;
+					document.getElementById("number-1").add(courseNumber);
+				}
+			}
 		</script>
 	</head>
-	<body>
+	<body onLoad = "addCourseSelections()">
 		<div class="container">
 			<div class="page-header">
 				<h1>DIGICAP 
@@ -154,7 +193,30 @@
 							<label for = "course-box">
 								Planned Courses:
 							</label>
-							<textarea DISABLED name = "courses" id = "course-box" class = "form-control">NOT YET IMPLEMENTED</textarea>
+							<!--<textarea DISABLED name = "courses" id = "course-box" class = "form-control">NOT YET IMPLEMENTED</textarea>-->
+							<p>
+								<select name = "area-1" id = "area-1" onChange = "addCourseNumbers()">
+									<option value = "None">AREA</option>
+								</select>
+								<select name = "number-1" id = "number-1">
+									<option value = "None">NUMBER</option>
+								</select>
+								<select name = "section-1">
+									<option value = "None">SECTION</option>
+								</select>
+								<span id = "start-time">
+									START
+								</span>
+								<span id = "end-time">
+									END
+								</span>
+								<span id = "credits">
+									CREDITS
+								</span>
+								<span id = "professor">
+									PROF
+								</span>
+							</p>
 						</div>
 						<label for = "suggestion-box">
 							Suggestions/Warnings:
