@@ -26,6 +26,8 @@
 		<script src = "fall15-course-data.js"></script>
 		<script src = "jquery/1.11.1/jquery.min.js"></script>
 		<script>
+		"use strict";
+
 			$(document).ready(function() {
 				$("h1").slideToggle().slideToggle();
 				$("#toggle-course-history").click(function() {
@@ -104,7 +106,7 @@
 			})();
 
 			var courseCount = (function() {
-				count = 0;
+				var count = 0;
 
 				return function(delta) {
 					if(delta) {
@@ -116,7 +118,7 @@
 			})();
 
 			var getRowUID = (function() {
-				id = 0;
+				var id = 0;
 
 				return function() {
 					id++;
@@ -133,7 +135,7 @@
 
 			function removeCourseRow(num)
 			{
-				courseRowId = "#course-row-" + num;
+				var courseRowId = "#course-row-" + num;
 				$(courseRowId).remove();
 				courseCount(-1);
 			}
@@ -146,8 +148,21 @@
 				return courseList.length > 0 ? courseList[0] : undefined; 
 			}
 
-			function getUniqueSectionsByArea(area) {
-				return ;
+			function partitionAreaSectionsByNumber(area) {
+				var areaCourses = getCourseListByArea()[area];
+				var partitionedArea = {};
+				areaCourses.forEach(function(course) {
+					var number = course.number;
+					if(number in partitionedArea) {
+						partitionedArea[number].push(course);
+					} else {
+						partitionedArea[number] = [course];
+					}
+				});
+
+				//alert(partitionedArea.pop()[0].number);
+
+				return partitionedArea;
 			}
 
 			function getSectionsByAreaAndNumber(area, number) {
@@ -186,20 +201,69 @@
 				return "course-row-" + rowId;
 			}
 
-			function updateCourseRow(properties, rowId) {
+			function updateCourseRow(properties, rowId, updateCourseNumbers, updateSectionNumbers) {
 				var courseRowIdPrefixStr = getRowIdPrefixStr(rowId);
 				var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
 
 				var numberSelectMenu = $("#" + courseRowIdPrefixStr + "-numberSelect");
 				var sectionSelectMenu = $("#" + courseRowIdPrefixStr + "-sectionSelect");
 
-				numberSelectMenu.empty();
+				var coursesByNumber = partitionAreaSectionsByNumber(selectedCourseArea);
 
+				if(updateCourseNumbers) {
+					//var sortedCourseNumbers = courseByNumber.map()
+					var sortedCoursesByNumber = Object.getOwnPropertyNames(coursesByNumber).sort();
+
+					numberSelectMenu.empty();
+
+					sortedCoursesByNumber.forEach(function(courseNumber) {
+						addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+					});
+
+					/*
+					for(var courseNumber in coursesByNumber) {
+						addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+					}
+					*/
+				}
+
+				var selectedCourseNumber = numberSelectMenu.val();
+
+				if(updateCourseNumbers || updateSectionNumbers) {
+					sectionSelectMenu.empty();
+
+					coursesByNumber[selectedCourseNumber].forEach(function(course) {
+						addNewOption(courseRowIdPrefixStr + "-sectionSelect", course.section);
+					});
+				}
+
+				var selectedCourse = getCourseByAreaNumSection(selectedCourseArea, selectedCourseNumber, sectionSelectMenu.val());
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[3]).text(selectedCourse.title);
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[4]).empty();
+				$("#" + courseRowIdPrefixStr + "-" + properties[5]).empty();
+				$("#" + courseRowIdPrefixStr + "-" + properties[6]).empty();
+
+				if(selectedCourse.days) {
+					for(var i = 0; i < selectedCourse.days.length; i++) {
+						$("#" + courseRowIdPrefixStr + "-" + properties[4]).append("<nobr>" + selectedCourse.days[i] + "</nobr><br>\n");
+						$("#" + courseRowIdPrefixStr + "-" + properties[5]).append("<nobr>" + selectedCourse.startTimes[i] + "</nobr><br>\n");
+						$("#" + courseRowIdPrefixStr + "-" + properties[6]).append("<nobr>" + selectedCourse.endTimes[i] +"</nobr><br>\n");
+					}
+				}
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[7]).text(selectedCourse.credits);
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[8]).empty();
+				selectedCourse.professors.forEach(function(professor) {
+					$("#" + courseRowIdPrefixStr + "-" + properties[8]).append(professor + "<br>\n");
+				});
 			}
 
 			function addCourseRow()
 			{
-				var properties = ["area", "number", "section", "days", "start", "end", "credits", "prof", "choice", "remove"];
+				var properties = ["area", "number", "section", "title", "days", "start", "end", "credits", "prof", "choice", "remove"];
 				var coursesByArea = getCourseListByArea();
 				var rowId = getRowUID();
 				var courseRowIdPrefixStr = getRowIdPrefixStr(rowId);
@@ -225,16 +289,26 @@
 
 				var areaCellId = "#" + courseRowIdPrefixStr + "-" + properties[0];
 				$(areaCellId).append(areaSelect);
-
-				for(area in coursesByArea) {
+				var numberCellId = "#" + courseRowIdPrefixStr + "-" + properties[1];
+				$(numberCellId).append(numberSelect);
+				var sectionCellId = "#" + courseRowIdPrefixStr + "-" + properties[2];
+				$(sectionCellId).append(sectionSelect);
+				
+				for(var area in coursesByArea) {
 					addNewOption(courseRowIdPrefixStr + "-areaSelect", area);
 				}
 
-				var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+				updateCourseRow(properties, rowId, true);
+				
 
-				var numberCellId = "#" + courseRowIdPrefixStr + "-" + properties[1];
-				$(numberCellId).append(numberSelect);
+
+				//var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+
+				//var numberCellId = "#" + courseRowIdPrefixStr + "-" + properties[1];
+				//$(numberCellId).append(numberSelect);
 				$("#" + courseRowIdPrefixStr + "-areaSelect").change(function() {
+					updateCourseRow(properties, rowId, true);
+					/*
 					selectedCourseArea = $(this).val();
 					$("#" + courseRowIdPrefixStr + "-numberSelect").empty();
 					var courseNumbers = [];
@@ -271,17 +345,22 @@
 					//var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
 					//var sectionSelectObj = $("#" + courseRowIdPrefixStr + "-sectionSelect");
 					//sectionSelectObj.empty();
-
-
+					*/
 				});
 
+/*
 				for(var course in coursesByArea[selectedCourseArea]) {
 					var courseNumber = coursesByArea[selectedCourseArea][course].number;
 					addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
 				}
 
 				var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+*/
+				$("#" + courseRowIdPrefixStr + "-numberSelect").change(function() {
+					updateCourseRow(properties, rowId, false, true);
+				});
 
+/*
 				var sectionCellId = "#" + courseRowIdPrefixStr + "-" + properties[2];
 				$(sectionCellId).append(sectionSelect);
 
@@ -292,11 +371,15 @@
 						addNewOption(courseRowIdPrefixStr + "-sectionSelect", section);
 					}
 				}
+*/
+				$("#" + courseRowIdPrefixStr + "-sectionSelect").change(function() {
+					updateCourseRow(properties, rowId);
+				});
 
-				var removeCellId = "#" + courseRowIdPrefixStr + "-" + properties[9];
+				var removeCellId = "#" + courseRowIdPrefixStr + "-" + properties[10];
 				$(removeCellId).append(removeSpan);
 				$("#" + courseRowIdPrefixStr + "-removeSpan").text("-");
-				$("#" + courseRowIdPrefixStr + "-removeSpan").click(removeCourseRow.bind(undefined, id));
+				$("#" + courseRowIdPrefixStr + "-removeSpan").click(removeCourseRow.bind(undefined, rowId));
 
 				console.log($("#course-table").html());
 
@@ -317,7 +400,7 @@
 					}
 				});
 
-				for(area in coursesByArea) {
+				for(var area in coursesByArea) {
 					var courseArea = document.createElement("OPTION");
 					courseArea.setAttribute("value", area);
 					courseArea.text = area;
@@ -342,7 +425,7 @@
 				//var courseArea = document.getElementById("area-1");
 				//var area = courseArea.options[courseArea.selectedIndex].value;
 //alert(area);
-				for(course in coursesByArea[area]) {
+				for(var course in coursesByArea[area]) {
 					var courseNumber = document.createElement("OPTION");
 					courseNumber.setAttribute("value", coursesByArea[area][course].number);
 					courseNumber.text = coursesByArea[area][course].number;
@@ -468,6 +551,7 @@
 										<th>AREA</th>
 										<th>NUMBER</th>
 										<th>SECTION</th>
+										<th>TITLE</th>
 										<th>DAYS</th>
 										<th>START</th>
 										<th>END</th>
