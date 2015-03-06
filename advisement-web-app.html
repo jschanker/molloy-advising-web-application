@@ -24,7 +24,23 @@
 		<script src = "majors.js"></script>
 		<script src = "input-processor.js"></script>
 		<script src = "fall15-course-data.js"></script>
+		<script src = "jquery/1.11.1/jquery.min.js"></script>
 		<script>
+			$(document).ready(function() {
+				$("h1").slideToggle().slideToggle();
+				$("#toggle-course-history").click(function() {
+					//alert($("#course-history-box").val());
+					$("#course-history-box-container").slideToggle("slow");
+					if($(this).text().indexOf("-") == "-1") {
+						$(this).text("-");
+					} else {
+						$(this).text("+");
+					}
+				});
+				$("#addHeader").click(addCourseRow);
+
+				addCourseRow();
+			});
 			function generateReport()
 			{
 				/*var courseHistory = document.getElementById('course-history-box').value;
@@ -52,7 +68,8 @@
 						// Nice way to replace all (http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript)
 				}
 				responseHTML += "</ol>";
-				document.getElementById('suggestion-box').innerHTML = responseHTML;
+				//document.getElementById('suggestion-box').innerHTML = responseHTML;
+				$('#suggestion-box').html(responseHTML);
 				//alert(responseHTML);
 				//parseCourseHistory(document.getElementById('course-history-box').value);
 			}
@@ -67,10 +84,231 @@
 					document.getElementById("second-major-select").options[0].selected = 'selected';
 				}
 			}
+
+			var getCourseListByArea = (function(){
+				var courses = JSON.parse(getCurrentCourses());
+				var coursesByArea = {};
+				
+				courses.forEach(function(course) {
+					if(!(course.area in coursesByArea)) {
+						coursesByArea[course.area] = [course];
+					} else {
+						coursesByArea[course.area].push(course);
+					}
+				});
+
+				return function() {
+					return coursesByArea;
+				}
+
+			})();
+
+			var courseCount = (function() {
+				count = 0;
+
+				return function(delta) {
+					if(delta) {
+						if(0 < count + delta)
+							count += delta;
+					}
+					return count;
+				}
+			})();
+
+			var getRowUID = (function() {
+				id = 0;
+
+				return function() {
+					id++;
+					return id;
+				}
+			})();
+
+			function addPlusButton() {
+				var addButton = document.createElement("button");
+				addButton.setAttribute("value", "+");
+
+				return addButton;
+			}
+
+			function removeCourseRow(num)
+			{
+				courseRowId = "#course-row-" + num;
+				$(courseRowId).remove();
+				courseCount(-1);
+			}
+
+			function getCourseByAreaNumSection(area, number, section) {
+				var courseList = getCourseListByArea()[area].filter(function(course) {
+					return course.number == number && course.section == section;
+				});
+
+				return courseList.length > 0 ? courseList[0] : undefined; 
+			}
+
+			function getUniqueSectionsByArea(area) {
+				return ;
+			}
+
+			function getSectionsByAreaAndNumber(area, number) {
+				return getCourseListByArea()[area].filter(function(course) {
+					return course.number == number;
+				}).map(function(course) {
+					return course.section;
+				});
+			}
+
+			function createNewDOMElement(type, id, className) {
+				var element = document.createElement(type);
+
+				if(className) {
+					element.setAttribute("class", className);
+				}
+				if(id) {
+					element.setAttribute("id", id);
+				}
+
+				return element;
+			}
+
+			function addNewOption(selectId, value, text) {
+				var jQueryElement = $("#" + selectId);
+				var optionElement = document.createElement("OPTION");
+				optionElement.setAttribute("value", value);
+				if(!text) {
+					text = value;
+				}
+				optionElement.text = text;
+				jQueryElement.append(optionElement);
+			}
+
+			function getRowIdPrefixStr(rowId) {
+				return "course-row-" + rowId;
+			}
+
+			function updateCourseRow(properties, rowId) {
+				var courseRowIdPrefixStr = getRowIdPrefixStr(rowId);
+				var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+
+				var numberSelectMenu = $("#" + courseRowIdPrefixStr + "-numberSelect");
+				var sectionSelectMenu = $("#" + courseRowIdPrefixStr + "-sectionSelect");
+
+				numberSelectMenu.empty();
+
+			}
+
+			function addCourseRow()
+			{
+				var properties = ["area", "number", "section", "days", "start", "end", "credits", "prof", "choice", "remove"];
+				var coursesByArea = getCourseListByArea();
+				var rowId = getRowUID();
+				var courseRowIdPrefixStr = getRowIdPrefixStr(rowId);
+				var tableRow = createNewDOMElement("tr",courseRowIdPrefixStr);
+
+				var areaSelect = createNewDOMElement("select", courseRowIdPrefixStr + "-areaSelect", "form-control");
+				var numberSelect = createNewDOMElement("select", courseRowIdPrefixStr + "-numberSelect", "form-control");
+				var sectionSelect = createNewDOMElement("select", courseRowIdPrefixStr + "-sectionSelect", "form-control");
+
+				var start = document.createElement("span");
+				var end = document.createElement("span");
+				var credits = document.createElement("span");
+				var professor = document.createElement("span");
+				var removeSpan = createNewDOMElement("span", courseRowIdPrefixStr + "-removeSpan", "toggle");
+				//var removeButton = document.createElement("span");
+
+				$("#course-table").append(tableRow);
+
+				properties.forEach(function(property) {
+					var td = createNewDOMElement("td", courseRowIdPrefixStr + "-" + property);
+					$("#" + courseRowIdPrefixStr).append(td);
+				});
+
+				var areaCellId = "#" + courseRowIdPrefixStr + "-" + properties[0];
+				$(areaCellId).append(areaSelect);
+
+				for(area in coursesByArea) {
+					addNewOption(courseRowIdPrefixStr + "-areaSelect", area);
+				}
+
+				var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+
+				var numberCellId = "#" + courseRowIdPrefixStr + "-" + properties[1];
+				$(numberCellId).append(numberSelect);
+				$("#" + courseRowIdPrefixStr + "-areaSelect").change(function() {
+					selectedCourseArea = $(this).val();
+					$("#" + courseRowIdPrefixStr + "-numberSelect").empty();
+					var courseNumbers = [];
+					//alert(selectedCourseArea)
+
+					for(var course in coursesByArea[selectedCourseArea]) {
+						var courseNumber = coursesByArea[selectedCourseArea][course].number;
+						var section = coursesByArea[selectedCourseArea][course].section;
+						if(courseNumbers.indexOf(courseNumber) == -1) {
+							console.log(courseNumbers);
+							addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+							courseNumbers.push(courseNumber);
+						}
+					}
+
+					var sectionSelectObj = $("#" + courseRowIdPrefixStr + "-sectionSelect");
+					var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+					sectionSelectObj.empty();
+
+					var sections = getSectionsByAreaAndNumber(selectedCourseArea, selectedCourseNumber);
+
+					sections.forEach(function(section) {
+						addNewOption(courseRowIdPrefixStr + "-sectionSelect", section);
+					});
+
+					var selectedCourse = getCourseByAreaNumSection(selectedCourseArea, selectedCourseNumber, sectionSelectObj.val());
+
+					$("#" + courseRowIdPrefixStr + "-" + properties[6]).text(selectedCourse.credits);
+					$("#" + courseRowIdPrefixStr + "-" + properties[7]).empty();
+					selectedCourse.professors.forEach(function(professor) {
+						$("#" + courseRowIdPrefixStr + "-" + properties[7]).append(professor + "<br>");
+					});
+					//$("#" + courseRowIdPrefixStr + "-" + properties[7]).text(selectedCourse.professors);
+					//var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+					//var sectionSelectObj = $("#" + courseRowIdPrefixStr + "-sectionSelect");
+					//sectionSelectObj.empty();
+
+
+				});
+
+				for(var course in coursesByArea[selectedCourseArea]) {
+					var courseNumber = coursesByArea[selectedCourseArea][course].number;
+					addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+				}
+
+				var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+
+				var sectionCellId = "#" + courseRowIdPrefixStr + "-" + properties[2];
+				$(sectionCellId).append(sectionSelect);
+
+				for(var course in coursesByArea[selectedCourseArea]) {
+					var courseNumber = coursesByArea[selectedCourseArea][course].number;
+					if(courseNumber == selectedCourseNumber) {
+						var section = coursesByArea[selectedCourseArea][course].section;
+						addNewOption(courseRowIdPrefixStr + "-sectionSelect", section);
+					}
+				}
+
+				var removeCellId = "#" + courseRowIdPrefixStr + "-" + properties[9];
+				$(removeCellId).append(removeSpan);
+				$("#" + courseRowIdPrefixStr + "-removeSpan").text("-");
+				$("#" + courseRowIdPrefixStr + "-removeSpan").click(removeCourseRow.bind(undefined, id));
+
+				console.log($("#course-table").html());
+
+				courseCount(1); // increase course count by 1
+
+			}
+
 			function addCourseSelections()
 			{
 				var courses = JSON.parse(getCurrentCourses());
 				var coursesByArea = {};
+
 				courses.forEach(function(course) {
 					if(!(course.area in coursesByArea)) {
 						coursesByArea[course.area] = [course];
@@ -90,14 +328,20 @@
 			}
 			function addCourseNumbers()
 			{
-				var coursesByArea = addCourseSelections();
-				for(var opt in document.getElementById("number-1").options) {
-					document.getElementById("number-1").remove(0);
-				}
-
 				var courseArea = document.getElementById("area-1");
 				var area = courseArea.options[courseArea.selectedIndex].value;
+				//$("#area-1").empty();
+				$("#number-1").empty();
+				var coursesByArea = addCourseSelections();
+				//$("area-1").options[$("area-1")]
+				/*for(var opt in document.getElementById("number-1").options) {
+					document.getElementById("number-1").remove(0);
+				}*/
 
+				//var courseArea = $("area-1");//document.getElementById("area-1");
+				//var courseArea = document.getElementById("area-1");
+				//var area = courseArea.options[courseArea.selectedIndex].value;
+//alert(area);
 				for(course in coursesByArea[area]) {
 					var courseNumber = document.createElement("OPTION");
 					courseNumber.setAttribute("value", coursesByArea[area][course].number);
@@ -107,7 +351,7 @@
 			}
 		</script>
 	</head>
-	<body onLoad = "addCourseSelections()">
+	<body>
 		<div class="container">
 			<div class="page-header">
 				<h1>DIGICAP 
@@ -131,7 +375,7 @@
 			</div>
 			<form role = "form" id = "mainForm">
 				<div class = "row">
-					<div class = "col-md-6">
+					<div class = "col-md-4">
 						<div class = "form-group">
 							<label for = "first-major-select">
 								First Major:
@@ -145,6 +389,8 @@
 								<!--<option value = "cis">B.S. Computer Information Systems</option>-->
 							</select>
 						</div>
+					</div>
+					<div class = "col-md-4">
 						<div class = "form-group">
 							<label for = "second-major-select">
 								Second Major:
@@ -161,6 +407,8 @@
 								<!--<option value = "other">Other</option>-->
 							</select>
 						</div>
+					</div>
+					<div class = "col-md-4">
 						<div class = "form-group">
 							<label for = "minor-select">
 								Minor:
@@ -172,7 +420,11 @@
 							<option value = "none" SELECTED>None</option>
 							<!--<option value = "other">Other</option>-->
 							</select>
-						</div>									
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
 						<div class = "form-group">
 							<label for = "graduation-select">
 								Planned Graduation:
@@ -188,36 +440,88 @@
 								<option value = "8">Fall 2018</option>
 								<option value = "9">Spring 2019 (Freshman in 5-year)</option>
 							</select>
-						</div>									
-						<div class = "form-group">
-							<label for = "course-box">
-								Planned Courses:
-							</label>
-							<!--<textarea DISABLED name = "courses" id = "course-box" class = "form-control">NOT YET IMPLEMENTED</textarea>-->
-							<p>
-								<select name = "area-1" id = "area-1" onChange = "addCourseNumbers()">
-									<option value = "None">AREA</option>
-								</select>
-								<select name = "number-1" id = "number-1">
-									<option value = "None">NUMBER</option>
-								</select>
-								<select name = "section-1">
-									<option value = "None">SECTION</option>
-								</select>
-								<span id = "start-time">
-									START
-								</span>
-								<span id = "end-time">
-									END
-								</span>
-								<span id = "credits">
-									CREDITS
-								</span>
-								<span id = "professor">
-									PROF
-								</span>
-							</p>
 						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
+						<p>
+							<label for = "course-history-box">
+								Course History
+							</label> 
+							(Select all (Ctrl+A) from Course History on Lions Den, Copy (Ctrl+C), and Paste (Ctrl+V) below):
+							<span id = "toggle-course-history" class = "toggle-border">-</span>
+						</p>
+						<div id = "course-history-box-container">
+							<textarea class = "form-control" name = "course-history" id = "course-history-box"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "form-group">
+						<div class = "col-md-12">
+							<label>Planned Courses:</label>
+							<!--<textarea DISABLED name = "courses" id = "course-box" class = "form-control">NOT YET IMPLEMENTED</textarea>-->
+							<table class = "table table-bordered" id = "course-table">
+								<thead>
+									<tr>
+										<th>AREA</th>
+										<th>NUMBER</th>
+										<th>SECTION</th>
+										<th>DAYS</th>
+										<th>START</th>
+										<th>END</th>
+										<th>CREDITS</th>
+										<th>PROFESSORS</th>
+										<th>GOOD CHOICE?</th>
+										<th id = "addHeader" class = "toggle">+</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!--<tr>
+										<td>
+											<select name = "area-1" id = "area-1" onChange = "addCourseNumbers()">
+												<option value = "None">AREA</option>
+											</select>
+										</td>
+										<td>
+											<select name = "number-1" id = "number-1">
+												<option value = "None">NUMBER</option>
+											</select>
+										</td>
+										<td>
+											<select name = "section-1">
+												<option value = "None">SECTION</option>
+											</select>
+										</td>
+										<td>
+											<span id = "start-time">
+												START
+											</span>
+										</td>
+										<td>
+											<span id = "end-time">
+												END
+											</span>
+										</td>
+										<td>
+											<span id = "credits">
+												CREDITS
+											</span>
+										</td>
+										<td>
+											<span id = "professor">
+												PROF
+											</span>
+										</td>
+									</tr>-->
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
 						<label for = "suggestion-box">
 							Suggestions/Warnings:
 						</label>
@@ -235,17 +539,7 @@
 							Information will appear here.<BR>
 							Information will appear here.<BR>-->
 						</div>
-					</div>								
-					<div class = "col-md-6">
-						<p>
-							<label for = "course-history-box">
-								Course History
-							</label> 
-							(Select all (Ctrl+A) from Course History on Lions Den, Copy (Ctrl+C), and Paste (Ctrl+V) below):
-						</p>
-						<textarea class = "form-control" name = "course-history" id = "course-history-box"></textarea>
 					</div>
-				</div>
 				<div class = "row">
 					<div class = "form-group">
 						<div class = "col-md-6 col-md-offset-3" id = "submitButton">

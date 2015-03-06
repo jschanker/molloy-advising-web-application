@@ -12,6 +12,33 @@ form
 	border-radius:10px;
 }
 
+label
+{
+	/*border-bottom:1px solid white;*/
+}
+
+#course-table th, #course-table td
+{
+	padding: 5px;
+	text-align: center
+}
+
+.toggle-border
+{
+	border: 1px solid black;
+	padding: 5px 10px 5px 10px;
+	font-weight:bold;
+	font-size:large;
+}
+
+.toggle
+{
+	/*border: 1px solid black;*/
+	padding: 5px 10px 5px 10px;
+	font-weight:bold;
+	font-size:large;
+}
+
 form .row
 {
 	padding: 10px;
