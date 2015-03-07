@@ -247,9 +247,9 @@
 
 				if(selectedCourse.days) {
 					for(var i = 0; i < selectedCourse.days.length; i++) {
-						$("#" + courseRowIdPrefixStr + "-" + properties[4]).append("<nobr>" + selectedCourse.days[i] + "</nobr><br>\n");
-						$("#" + courseRowIdPrefixStr + "-" + properties[5]).append("<nobr>" + selectedCourse.startTimes[i] + "</nobr><br>\n");
-						$("#" + courseRowIdPrefixStr + "-" + properties[6]).append("<nobr>" + selectedCourse.endTimes[i] +"</nobr><br>\n");
+						$("#" + courseRowIdPrefixStr + "-" + properties[4]).append("<span class = 'text-nowrap'>" + selectedCourse.days[i] + "</span><br>\n");
+						$("#" + courseRowIdPrefixStr + "-" + properties[5]).append("<span class = 'text-nowrap'>" + selectedCourse.startTimes[i] + "</span><br>\n");
+						$("#" + courseRowIdPrefixStr + "-" + properties[6]).append("<span class = 'text-nowrap'>" + selectedCourse.endTimes[i] +"</span><br>\n");
 					}
 				}
 
@@ -259,11 +259,25 @@
 				selectedCourse.professors.forEach(function(professor) {
 					$("#" + courseRowIdPrefixStr + "-" + properties[8]).append(professor + "<br>\n");
 				});
+
+				var courseInput = {
+					courseHistory:document.getElementById('course-history-box').value,
+					semestersToGraduate:document.getElementById('graduation-select').value,
+					firstMajor:document.getElementById('first-major-select').value,
+					secondMajor:document.getElementById('second-major-select').value,
+					minor:document.getElementById('minor-select').value,
+					selectedCourse:selectedCourse
+				};
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[9]).empty();
+				getCourseWarnings(courseInput).forEach(function(warningCode) {
+					$("#" + courseRowIdPrefixStr + "-" + properties[9]).append("<strong class = 'text-warning text-uppercase'>" + warningCode + "</strong><br>\n");
+				});
 			}
 
 			function addCourseRow()
 			{
-				var properties = ["area", "number", "section", "title", "days", "start", "end", "credits", "prof", "choice", "remove"];
+				var properties = ["area", "number", "section", "title", "days", "start", "end", "credits", "prof", "warnings", "remove"];
 				var coursesByArea = getCourseListByArea();
 				var rowId = getRowUID();
 				var courseRowIdPrefixStr = getRowIdPrefixStr(rowId);
@@ -513,15 +527,14 @@
 								Planned Graduation:
 							</label>
 							<select name = "graduation" id = "graduation-select" class = "form-control">
-								<option value = "1">Spring 2015 (Senior)</option>
-								<option value = "2">Fall 2015</option>
-								<option value = "3">Spring 2016 (Junior)</option>
-								<option value = "4">Fall 2016</option>
-								<option value = "5">Spring 2017 (Sophmore)</option>
-								<option value = "6">Fall 2017</option>
-								<option value = "7">Spring 2018 (Freshman)</option>
-								<option value = "8">Fall 2018</option>
-								<option value = "9">Spring 2019 (Freshman in 5-year)</option>
+								<option value = "1">Fall 2015</option>
+								<option value = "2">Spring 2016 (Junior)</option>
+								<option value = "3">Fall 2016</option>
+								<option value = "4">Spring 2017 (Sophmore)</option>
+								<option value = "5">Fall 2017</option>
+								<option value = "6">Spring 2018 (Freshman)</option>
+								<option value = "7">Fall 2018</option>
+								<option value = "8">Spring 2019 (Freshman in 5-year)</option>
 							</select>
 						</div>
 					</div>
@@ -557,7 +570,8 @@
 										<th>END</th>
 										<th>CREDITS</th>
 										<th>PROFESSORS</th>
-										<th>GOOD CHOICE?</th>
+										<!--<th>GOOD CHOICE?</th>-->
+										<th>WARNINGS</th>
 										<th id = "addHeader" class = "toggle">+</th>
 									</tr>
 								</thead>
