@@ -40,7 +40,7 @@ function getCommonElement(arr1, arr2)
 }
 
 function getCourseCode(courseItem) {
-	return courseItem.courseAreaCode + "  " + courseItem.courseNumber;
+	return makeCourseCode(courseItem.courseAreaCode, courseItem.courseNumber);
 }
 
 function makeCourseCode(area, courseNum) {
@@ -430,11 +430,11 @@ function getGenEdWarning(courseHistoryItems)
 	var genEdCreditsNeeded = 0;
 	var categoriesAndCreditsNeeded = getNeededGenEdRequirements(courseHistoryItems);
 	var warning = "For your general education requirements, you still need the following:\n";
-	for(var i = 0; i < categoriesAndCreditsNeeded.length; i++)
-	{
-		genEdCreditsNeeded += parseFloat(categoriesAndCreditsNeeded[i].credits);
-		warning += categoriesAndCreditsNeeded[i].credits + " credit(s) of " + categoriesAndCreditsNeeded[i].name + ", \n";
-	}
+
+	categoriesAndCreditsNeeded.forEach(function(categoryAndCreditsNeeded) {
+		genEdCreditsNeeded += parseFloat(categoryAndCreditsNeeded.credits);
+		warning += categoryAndCreditsNeeded.credits + " credit(s) of " + categoryAndCreditsNeeded.name + ", \n";
+	});
 
 	warning += "for a total of " + genEdCreditsNeeded + " credit(s)."
 
@@ -444,19 +444,19 @@ function getGenEdWarning(courseHistoryItems)
 function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, takenCourseCodes, maxDepth)
 {
 	// Returns the beginning of the semester number starting from Fall 2014 for which you'll be able to take
-	// a course requiring code courseAreaCode courseNumber if you start the reuired sequence after startSemesterOffset 
-	// semesters following Spring 2015 and have courses takenCourseCodes due to prerequisites and scheduled 
+	// a course requiring code courseAreaCode courseNumber if you start the required sequence startSemesterOffset 
+	// semesters after Fall 2014 and have courses takenCourseCodes due to prerequisites and scheduled 
 	// course offering times:
 	//
 	// For example, if course A only runs in the Spring and requires course B which only runs in the fall 
 	// which requires course C which only runs in the spring and takenCourseCodes does not include courses A, B, or C,
-	// getCourseDepth will return 4 with a startSemesterOffset of 1, but returns 6 with a startSemesterOffset
+	// getCourseDepth will return 4 for A with a startSemesterOffset of 1, but returns 6 with a startSemesterOffset
 	// of 2 or 3 since you need to wait until Spring of 2016 to take course C if you don't take it in Spring
 	// 2015.
 
 	var courseItem = getCourseWithCode(courseAreaCode, courseNumber);
 	//alert(courseItem.prerequisites);
-	var courseCode = courseAreaCode + "  " + courseNumber;
+	var courseCode = makeCourseCode(courseAreaCode, courseNumber);
 	var maxNumOfSemesters = startSemesterOffset;
 	var fourBitString;
 
@@ -466,9 +466,7 @@ function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, taken
 	if(takenCourseCodes.indexOf(courseCode) != -1)
 		return startSemesterOffset;
 
-	for(var i = 0; i < courseItem.prerequisites.length; i++)
-	{
-		var prerequisiteCourseCode = courseItem.prerequisites[i];
+	courseItem.prerequisites.forEach(function(prerequisiteCourseCode) {
 		var prerequisiteCourseAreaCode = prerequisiteCourseCode.substring(0, prerequisiteCourseCode.indexOf(" "));
 		var prerequisiteCourseNumber = parseInt(prerequisiteCourseCode.substring(prerequisiteCourseCode.indexOf("  ")+2));
 		var neededSemesters = getCourseDepth(prerequisiteCourseAreaCode, prerequisiteCourseNumber, 
@@ -477,7 +475,7 @@ function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, taken
 		{
 			maxNumOfSemesters = neededSemesters;
 		}
-	}
+	});
 
 	if((parseInt(courseItem.offered) & 15) == 0)
 	{
@@ -620,6 +618,7 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 	// may want to include major/minor logic in this function instead
 
     var MAX_COURSE_DEPTH = 8; // for error prevention: don't go deeper than 8 courses of prerequisites
+    var OFFSET_FROM_FALL_2014 = 2;
 	
 	var warning = "For your major and related requirements, you still need the following (Note: each course may have an unlisted alternative.):\n";
 
@@ -635,7 +634,8 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 			var title = requirement.info.title;
 			var area = requirement.area;
 			var code = requirement.codeNumber;
-			var neededNumberOfSemesters = getCourseDepth(area, code, 1, courseHistoryCodes, MAX_COURSE_DEPTH)-1;
+			var neededNumberOfSemesters = getCourseDepth(area, code, OFFSET_FROM_FALL_2014, 
+														 courseHistoryCodes, MAX_COURSE_DEPTH)-OFFSET_FROM_FALL_2014;
 
 			majorCreditsNeeded += parseFloat(credits);
 			warning += area + "  " + code + "  " + title + " \n";
@@ -644,7 +644,8 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 				warning += "It appears that you will not be able to take this course in order" + 
 			               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
 
-			else if(getCourseDepth(area, code, 2, courseHistoryCodes, MAX_COURSE_DEPTH)-1 > semestersToGraduate)
+			else if(getCourseDepth(area, code, OFFSET_FROM_FALL_2014+1, 
+				                   courseHistoryCodes, MAX_COURSE_DEPTH)-OFFSET_FROM_FALL_2014 > semestersToGraduate)
 				warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
 			               " to graduate on time without transfer credit.\n";
 		}
@@ -660,7 +661,8 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 			var title = requirement.info.title;
 			var area = requirement.area;
 			var code = requirement.codeNumber;
-			var neededNumberOfSemesters = getCourseDepth(area, code, 1, courseHistoryCodes, MAX_COURSE_DEPTH)-1;
+			var neededNumberOfSemesters = getCourseDepth(area, code, OFFSET_FROM_FALL_2014, 
+				                                         courseHistoryCodes, MAX_COURSE_DEPTH)-OFFSET_FROM_FALL_2014;
 
 			relatedCreditsNeeded += parseFloat(credits);
 			warning += area + "  " + code + "  " + title + " \n";
@@ -668,7 +670,8 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 				warning += "It appears that you will not be able to take this course in order" + 
 			               " to graduate on time without transfer credit (possibly because of when it or its prerequisites are offered).\n";
 
-			else if(getCourseDepth(area, code, 2, courseHistoryCodes, MAX_COURSE_DEPTH)-1 > semestersToGraduate)
+			else if(getCourseDepth(area, code, OFFSET_FROM_FALL_2014+1,
+			                       courseHistoryCodes, MAX_COURSE_DEPTH)-OFFSET_FROM_FALL_2014 > semestersToGraduate)
 				warning += "It appears that you need to take this course or one or more of its prerequisites this semester" + 
 			               " to graduate on time without transfer credit.\n";
 		}

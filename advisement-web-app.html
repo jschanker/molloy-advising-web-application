@@ -42,6 +42,41 @@
 				$("#addHeader").click(addCourseRow);
 
 				addCourseRow();
+
+				var properties = ["area", "number", "section", "title", "days", "start", "end", "credits", "prof", "warnings", "remove"];
+
+				$("#first-major-select").change(function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+				});
+				$("#second-major-select").change(function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+				});
+				$("#minor-select").change(function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+				});
+				$("#course-history-box").on('keyup paste', function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+				});
 			});
 			function generateReport()
 			{
@@ -199,6 +234,10 @@
 
 			function getRowIdPrefixStr(rowId) {
 				return "course-row-" + rowId;
+			}
+
+			function getRowIdFromPrefixStr(rowIdPrefixStr) {
+				return rowIdPrefixStr.substring(rowIdPrefixStr.lastIndexOf("-")+1);
 			}
 
 			function updateCourseRow(properties, rowId, updateCourseNumbers, updateSectionNumbers) {
