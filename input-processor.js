@@ -311,7 +311,8 @@ function getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, mino
 
 	var majorAndRelatedRequirements = [getMajorRequirements(majorOne), getMajorRequirements(majorTwo)];
 	var unusedCountingMajorCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForMajorFunc);
-	var countingRelatedCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForMajorFunc);
+	//var countingRelatedCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForRelatedFunc);
+	//var unusedCountingRelatedCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForRelatedFunc);
 	var majorIndex = 0;
 
 	majorAndRelatedRequirements.forEach(function(major) {
@@ -339,13 +340,14 @@ function getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, mino
 	majorIndex = 0;
 
 	majorAndRelatedRequirements.forEach(function(major) {
+		var countingRelatedCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForRelatedFunc); // reset for each major
 		major.relatedCodes.forEach(function(codeList) {
 			var possibleCourses = getCourseList(countingRelatedCourses, codeList);
 
 			var useIndex = 0; // TODO: Make course choice intelligent
 
 			if(possibleCourses.length > 0) {
-				removeCourseItemFromList(unusedCountingMajorCourses, possibleCourses[useIndex]);
+				removeCourseItemFromList(countingRelatedCourses, possibleCourses[useIndex]);
 			} else if(codeList.length > 0) {
 				neededMajorAndMinorCourses.relatedsRequirements[majorIndex].push(
 					{ info:getCourseWithCode(codeList[useIndex].split("  ")[0].trim(), parseInt(codeList[useIndex].split("  ")[1].trim())),
@@ -817,6 +819,56 @@ function getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor) {
 	// TODO: Need to fix overlapping course issue: e.g., MAT/BIO: 92 credits but BIO/MATH 88 - should be 88
 	// ELECTIVE CREDITS ISSUE
 
+	var REQUIRED_NUMBER_OF_LAS_CREDITS = 90;
+	var majorMinorRequirementsNeeded = getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, minor);
+	var majorMinorCourseRequirementsList = convertMajorMinorRequirementsToCourseItemList(majorMinorRequirementsNeeded);
+	var majorMinorCourseItemsNeeded = majorMinorRequirementsNeeded.majorsRequirements[0]
+										.map(convertInfoAreaCodeTripleToCourseItem);
+
+	Array.prototype.push.apply(majorMinorCourseItemsNeeded, 
+							   majorMinorRequirementsNeeded.majorsRequirements[1]
+								.map(convertInfoAreaCodeTripleToCourseItem));
+
+	// Only push major requirements first to allow for overlap, now redo for relateds
+
+	var coursesWithMajorRequirements = majorMinorCourseItemsNeeded.slice();
+	Array.prototype.push.apply(coursesWithMajorRequirements, courseHistoryItems);
+
+	var relatedsRequirementsNeeded = getNeededMajorMinorCourses(coursesWithMajorRequirements, majorOne, majorTwo, minor);
+	//var relatedRequirementsItemsNeeded = convertMajorMinorRequirementsToCourseItemList(relatedRequirementsNeeded);
+
+
+	for(var i = 0; i < 2; i++) {
+		Array.prototype.push.apply(majorMinorCourseItemsNeeded, 
+							   relatedsRequirementsNeeded.relatedsRequirements[i]
+								.map(convertInfoAreaCodeTripleToCourseItem));
+	}
+
+	// Now add general education requirements
+	var coursesWithAllMajorMinorRequirements = majorMinorCourseItemsNeeded.slice();
+
+	var majorCreditsNeeded = getTotal(coursesWithAllMajorMinorRequirements, "credits");
+
+	Array.prototype.push.apply(coursesWithAllMajorMinorRequirements, courseHistoryItems);
+
+	var genEdCategoriesAndCreditsNeeded = getNeededGenEdRequirements(coursesWithAllMajorMinorRequirements);
+
+	var genEdCreditsNeeded = getTotal(genEdCategoriesAndCreditsNeeded, "credits");
+
+	var LASCreditsNeeded = Math.max(REQUIRED_NUMBER_OF_LAS_CREDITS - 
+							getNumOfCredits(coursesWithAllMajorMinorRequirements, getLASCodes(), isPassingGradeFunction, isTransferCourse) - 
+							genEdCreditsNeeded, 0); // All general education courses count for LAS
+
+	alert("Major credits needed: " + majorCreditsNeeded + "\nAdditional General Education Credits needed:" + genEdCreditsNeeded + 
+		  "\nAdditional LAS Credits needed: " +  LASCreditsNeeded);
+
+}
+
+/*
+function getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor) {
+	// TODO: Need to fix overlapping course issue: e.g., MAT/BIO: 92 credits but BIO/MATH 88 - should be 88
+	// ELECTIVE CREDITS ISSUE
+
 	var majorMinorRequirementsNeeded = getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, minor);
 	var majorMinorCourseRequirementsList = convertMajorMinorRequirementsToCourseItemList(majorMinorRequirementsNeeded);
 	var majorMinorCourseItemsNeeded = majorMinorRequirementsNeeded.majorsRequirements[0]
@@ -851,7 +903,7 @@ function getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor) {
 	}
 
 	//alert(getTotal(majorMinorCourseItemsNeeded, "credits"));
-}
+}*/
 
 function generateAdvice(courseInput)
 {
