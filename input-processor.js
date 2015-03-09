@@ -859,8 +859,11 @@ function getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor) {
 							getNumOfCredits(coursesWithAllMajorMinorRequirements, getLASCodes(), isPassingGradeFunction, isTransferCourse) - 
 							genEdCreditsNeeded, 0); // All general education courses count for LAS
 
-	alert("Major credits needed: " + majorCreditsNeeded + "\nAdditional General Education Credits needed:" + genEdCreditsNeeded + 
-		  "\nAdditional LAS Credits needed: " +  LASCreditsNeeded);
+	$("#major-minor-credits").text(majorCreditsNeeded);
+	$("#gen-ed-credits").text(genEdCreditsNeeded);
+	$("#las-credits").text(LASCreditsNeeded);
+	//alert("Major credits needed: " + majorCreditsNeeded + "\nAdditional General Education Credits needed:" + genEdCreditsNeeded + 
+	//	  "\nAdditional LAS Credits needed: " +  LASCreditsNeeded);
 
 }
 

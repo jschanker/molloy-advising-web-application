@@ -52,6 +52,7 @@
 							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
 						}
 					});
+					generateReport();
 				});
 				$("#second-major-select").change(function() {
 					$('#course-table').find('tr').each(function() {
@@ -60,6 +61,7 @@
 							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
 						}
 					});
+					generateReport();
 				});
 				$("#minor-select").change(function() {
 					$('#course-table').find('tr').each(function() {
@@ -68,6 +70,7 @@
 							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
 						}
 					});
+					generateReport();
 				});
 				$("#course-history-box").on('keyup paste', function() {
 					$('#course-table').find('tr').each(function() {
@@ -76,6 +79,7 @@
 							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
 						}
 					});
+					generateReport();
 				});
 			});
 
@@ -680,6 +684,18 @@
 									</tr>-->
 								</tbody>
 							</table>
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
+						<label for = "credit-summary">Credit Summary (Semester's courses included)</label>:<BR>
+						<div id = "credit-summary">
+							<label class = "subheading">Major/Minor and Related Requirements</label>: <span id = "major-minor-credits"></span><BR>
+							<label class = "subheading">Additional General Education</label>: <span id = "gen-ed-credits"></span><BR>
+							<label class = "subheading">Additional LAS (Assuming 90 for B.A.)</label>: <span id = "las-credits"></span><BR>
+							<label class = "subheading">Additional Credits To Meet 128</label>: <span id = "additional-credits"></span><BR>
+							<label class = "subheading">Total Credits Needed</label>: <span id = "total"></span>
 						</div>
 					</div>
 				</div>
