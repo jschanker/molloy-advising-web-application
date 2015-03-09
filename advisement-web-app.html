@@ -78,6 +78,31 @@
 					});
 				});
 			});
+
+			function packagePlannedCourseItems() {
+				var plannedCourseItems = [];
+				$('#course-table').find('tr').each(function() {
+					if($(this).attr('id')) {
+						var courseRowIdPrefixStr = $(this).attr('id');
+						var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+						var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+						var selectedCourseSection = $("#" + courseRowIdPrefixStr + "-sectionSelect").val();
+						var courseItem = getCourseByAreaNumSection(selectedCourseArea, selectedCourseNumber, selectedCourseSection);
+						if( courseItem ) {
+							plannedCourseItems.push({
+								courseAreaCode:  selectedCourseArea,
+								courseNumber:    selectedCourseNumber,
+								countsForCredit: courseItem.credits > 0,
+								credits:         courseItem.credits,
+								grade:           "WIP"
+							});
+						}
+					}
+				});
+
+				return plannedCourseItems;
+			}
+
 			function generateReport()
 			{
 				/*var courseHistory = document.getElementById('course-history-box').value;
@@ -91,19 +116,20 @@
 					semestersToGraduate:document.getElementById('graduation-select').value,
 					firstMajor:document.getElementById('first-major-select').value,
 					secondMajor:document.getElementById('second-major-select').value,
-					minor:document.getElementById('minor-select').value
+					minor:document.getElementById('minor-select').value,
+					plannedCourseItems: packagePlannedCourseItems()
 				};
 
 				var responseItems = generateAdvice(courseInput);
 				//var responseItems = parseCourseHistory(courseHistory);
 				var responseHTML = "<ol>\n";
-				for(var i = 0; i < responseItems.length;i++)
-				{
-					var responseItem = responseItems[i];
+
+				responseItems.forEach(function(responseItem) {
 					if(responseItem)
 						responseHTML += "\t<li>" + responseItem.split("\n").join("<BR>\n") + "</li>\n"; 
 						// Nice way to replace all (http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript)
-				}
+				});
+
 				responseHTML += "</ol>";
 				//document.getElementById('suggestion-box').innerHTML = responseHTML;
 				$('#suggestion-box').html(responseHTML);

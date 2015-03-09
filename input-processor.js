@@ -242,9 +242,13 @@ function getCountingGradeList(criteria) {
 	return gradeLists[criteria];
 }
 
+function isPassingGradeFunction() {
+	return generateMatchingGradeFunction(getCountingGradeList("PASSING_TRANS_WIP"));
+}
+
 function generateMatchingGradeFunction(gradeList) {
 	return function(courseItem) {
-		return gradeList.indexOf(courseItem.grade) != -1;
+		return courseItem.countsForCredit && gradeList.indexOf(courseItem.grade) != -1;
 	}
 }
 
@@ -757,8 +761,16 @@ function getCourseWarnings(courseInput)
 	var genEdCategoriesAndCreditsNeededWithOtherReqs = 
 			getNeededGenEdRequirements( courseHistoryItemsWithMajorMinorReqs );
 
+	//var earnedCreditCountWithoutCourse = getNumOfCredits(courseHistoryItems, generateCourseCodeList(courseHistoryItems), isPassingGradeFunction, isTransferCourse);
+	//var earnedCreditCountWithCourse = getNumOfCredits(courseHistoryItemsWithCourse, generateCourseCodeList(courseHistoryItemsWithCourse), isPassingGradeFunction, isTransferCourse);
+
+
 	if(courseItem.credits == 0) {
 		warnings.push("Noncredit/Remedial");
+	}
+
+	else if(isCourseItemInItemList(courseItem, courseHistoryItems)) {
+		warnings.push("Repeat")
 	}
 
 	else if( getTotal(majorMinorRequirementsNeededWithoutCourse, "credits") == 
@@ -801,24 +813,61 @@ function getCourseWarnings(courseInput)
 	return warnings;//["Elective","Not an LAS","Gen ed. req. met by major/minor req.","Pre-/Co-requisite(s) needed"];
 }
 
+function getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor) {
+	// TODO: Need to fix overlapping course issue: e.g., MAT/BIO: 92 credits but BIO/MATH 88 - should be 88
+	// ELECTIVE CREDITS ISSUE
+
+	var majorMinorRequirementsNeeded = getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, minor);
+	var majorMinorCourseRequirementsList = convertMajorMinorRequirementsToCourseItemList(majorMinorRequirementsNeeded);
+	var majorMinorCourseItemsNeeded = majorMinorRequirementsNeeded.majorsRequirements[0]
+										.map(convertInfoAreaCodeTripleToCourseItem);
+
+	Array.prototype.push.apply(majorMinorCourseItemsNeeded, 
+							   majorMinorRequirementsNeeded.majorsRequirements[1]
+								.map(convertInfoAreaCodeTripleToCourseItem));
+
+
+	for(var i = 0; i < 2; i++) {
+		var relatedMajorRequirements = majorMinorRequirementsNeeded.relatedsRequirements[i]
+											.map(convertInfoAreaCodeTripleToCourseItem);
+
+		var neededAdditionalCourses = []; // use separate list because may have same elective in related requirement listed twice
+
+		relatedMajorRequirements.forEach(function(additionalRequirement) {
+			isAdditionalRequirementInList = false;
+			majorMinorCourseItemsNeeded.forEach(function(requirement) {
+				if(requirement.courseAreaCode == additionalRequirement.courseAreaCode && 
+					requirement.courseNumber == additionalRequirement.courseNumber) {
+					isAdditionalRequirementInList = true;
+				}
+			});
+			if(!isAdditionalRequirementInList) {
+				neededAdditionalCourses.push(additionalRequirement);
+			}
+		});
+
+		Array.prototype.push.apply(majorMinorCourseItemsNeeded, 
+							   		neededAdditionalCourses);
+	}
+
+	//alert(getTotal(majorMinorCourseItemsNeeded, "credits"));
+}
+
 function generateAdvice(courseInput)
 {
 	var courseHistoryItems = parseCourseHistory(courseInput.courseHistory);
+	Array.prototype.push.apply(courseHistoryItems, courseInput.plannedCourseItems);
 	var majorOne = courseInput.firstMajor;
 	var majorTwo = courseInput.secondMajor;
 	var minor = courseInput.minor;
+		getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor);
 	var LASCourseItems = getLASCodes();
 	var passGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer"]; 
 	var adviceItems = [];
 
 	//var majorMinorCourseRequirements = getMajorMinorAdvice(courseHistoryItems, majorOne, majorTwo, minor);
 
-	var LASCreditCount = getNumOfCredits(courseHistoryItems, LASCourseItems, 
-		function(courseItem)
-		{
-			//return hasCommonElement(courseInfo, gradeList);
-			return passGradeList.indexOf(courseItem.grade) != -1; // passing grade in course
-		}, isTransferCourse);
+	var LASCreditCount = getNumOfCredits(courseHistoryItems, LASCourseItems, isPassingGradeFunction, isTransferCourse);
 
 	var earnedCreditCount = getNumOfCredits(courseHistoryItems, generateCourseCodeList(courseHistoryItems), 
 		function(courseItem)
@@ -836,12 +885,12 @@ function generateAdvice(courseInput)
 			//return hasCommonElement(courseInfo, gradeList);
 			return courseItem.countsForCredit && courseItem.grade == "WIP"; // passing grade in course, not remedial
 		}, isTransferCourse);
-	var LASCreditsInProgress = getNumOfCredits(courseHistoryItems, LASCourseItems, 
+	/*var LASCreditsInProgress = getNumOfCredits(courseHistoryItems, LASCourseItems, 
 		function(courseItem)
 		{
 			//return hasCommonElement(courseInfo, gradeList);
 			return courseItem.countsForCredit && courseItem.grade == "WIP"; // passing grade in course, not remedial
-		}, isTransferCourse);
+		}, isTransferCourse);*/
 
 	var majorMinorWarning = getMajorMinorWarning(majorMinorCourseRequirements, courseInput.semestersToGraduate, 
 		                                         generateCourseCodeList(courseHistoryItems, 
@@ -854,7 +903,8 @@ function generateAdvice(courseInput)
 	adviceItems.push(majorMinorWarning);
 	adviceItems.push(genEdWarning);
 	adviceItems.push(creditWarning);
-	adviceItems.push(getLASCreditWarning(LASCreditCount + LASCreditsInProgress, courseInput.semestersToGraduate));
+	//adviceItems.push(getLASCreditWarning(LASCreditCount + LASCreditsInProgress, courseInput.semestersToGraduate));
+	adviceItems.push(getLASCreditWarning(LASCreditCount, courseInput.semestersToGraduate));
 
 	//alert("Depth: " + getCourseDepth("MAT", 115, 8, generateCourseCodeList(courseHistoryItems), 5));
 //alert(parseInt(getCourseWithCode("MAT", 232).offered));
