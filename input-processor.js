@@ -815,11 +815,10 @@ function getCourseWarnings(courseInput)
 	return warnings;//["Elective","Not an LAS","Gen ed. req. met by major/minor req.","Pre-/Co-requisite(s) needed"];
 }
 
-function getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor) {
-	// TODO: Need to fix overlapping course issue: e.g., MAT/BIO: 92 credits but BIO/MATH 88 - should be 88
-	// ELECTIVE CREDITS ISSUE
+function getNeededCredits(semestersToGraduate, courseHistoryItems, majorOne, majorTwo, minor) {
 
 	var REQUIRED_NUMBER_OF_LAS_CREDITS = 90;
+	var NUM_OF_CREDITS
 	var majorMinorRequirementsNeeded = getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, minor);
 	var majorMinorCourseRequirementsList = convertMajorMinorRequirementsToCourseItemList(majorMinorRequirementsNeeded);
 	var majorMinorCourseItemsNeeded = majorMinorRequirementsNeeded.majorsRequirements[0]
@@ -859,9 +858,174 @@ function getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor) {
 							getNumOfCredits(coursesWithAllMajorMinorRequirements, getLASCodes(), isPassingGradeFunction, isTransferCourse) - 
 							genEdCreditsNeeded, 0); // All general education courses count for LAS
 
+	// jQuery code should not be here nor should warnings!  Wow, this has gotten messy!
+	// While we're at it, let's just cut and paste code from other functions - modularization, pfft, who needs that?
+	// May as well start adding Spaghetti code as well.
+
+	var REQUIRED_NUMBER_OF_CREDITS = 128;
+	//var takenCredits = getNumOfCredits(courseHistoryItems, generateCourseCodeList(courseHistoryItems), isPassingGradeFunction, isTransferCourse);
+	//alert(takenCredits);
+
+	var passGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer"]; 
+
+	var earnedCreditCount = getNumOfCredits(courseHistoryItems, generateCourseCodeList(courseHistoryItems), 
+		function(courseItem)
+		{
+			//return hasCommonElement(courseInfo, gradeList);
+			return courseItem.countsForCredit && passGradeList.indexOf(courseItem.grade) != -1; // passing grade in course, not remedial
+		}, isTransferCourse);
+
+	var creditsInProgress = getNumOfCredits(courseHistoryItems, generateCourseCodeList(courseHistoryItems), 
+		function(courseItem)
+		{
+			//return hasCommonElement(courseInfo, gradeList);
+			return courseItem.countsForCredit && courseItem.grade == "WIP"; // passing grade in course, not remedial
+		}, isTransferCourse);
+
+	var takenCredits = earnedCreditCount + creditsInProgress;
+
+
+	var additionalCredits = Math.max(0, REQUIRED_NUMBER_OF_CREDITS - (majorCreditsNeeded + genEdCreditsNeeded + LASCreditsNeeded + takenCredits));
+	var totalCreditsNeeded = majorCreditsNeeded + genEdCreditsNeeded + LASCreditsNeeded + additionalCredits;
+
 	$("#major-minor-credits").text(majorCreditsNeeded);
 	$("#gen-ed-credits").text(genEdCreditsNeeded);
 	$("#las-credits").text(LASCreditsNeeded);
+	$("#additional-credits").text(additionalCredits);
+	$("#total-credits").text(totalCreditsNeeded);
+
+	var NORMAL_TERM_CREDIT_LOAD = 16;
+	var MAX_TERM_CREDIT_LOAD = 18;
+	//var neededCredits = REQUIRED_NUMBER_OF_CREDITS - numOfCredits
+	var totalCreditsUnderNormalLoad = (semestersToGraduate-1) * NORMAL_TERM_CREDIT_LOAD;
+	var totalCreditsUnderMaxLoad = (semestersToGraduate-1) * MAX_TERM_CREDIT_LOAD;
+
+	if(majorCreditsNeeded > totalCreditsUnderMaxLoad) {
+		$("#major-minor-credits").addClass("text-danger");
+		$("#major-minor-credits-warning").text("With your planned courses for this semester, you are in danger of not satisfying the requirements" +   
+		   " for your major/minor on time.  Even taking " + MAX_TERM_CREDIT_LOAD + " credits per Fall/Spring term does not seem sufficient.");
+		$("#major-minor-credits-warning").addClass("text-danger");
+	} else if(majorCreditsNeeded > totalCreditsUnderNormalLoad) {
+		$("#major-minor-credits").addClass("text-warning");
+		$("#major-minor-credits").removeClass("text-danger");
+		$("#major-minor-credits-warning").addClass("text-warning");
+		$("#major-minor-credits-warning").text("With your planned courses for this semester, it appears you will need to take overloads or summer courses" +   
+		   " in order to satisfy your major/minor requirements on time.  Beyond a normal " + NORMAL_TERM_CREDIT_LOAD + " credit per term load, you " + 
+		   "appear to need " +  parseInt(majorCreditsNeeded - totalCreditsUnderNormalLoad) + " additional credits.");
+		$("#major-minor-credits-warning").removeClass("text-danger");
+	} else {
+		$("#major-minor-credits").removeClass("text-danger");
+		$("#major-minor-credits").removeClass("text-warning");
+		$("#major-minor-credits-warning").text("");
+		$("#major-minor-credits-warning").removeClass("text-danger");
+		$("#major-minor-credits-warning").removeClass("text-warning");
+	}
+
+
+	if(genEdCreditsNeeded > totalCreditsUnderMaxLoad) {
+		$("#gen-ed-credits").addClass("text-danger");
+		$("#gen-ed-credits-warning").text("With your planned courses for this semester, you are in danger of not satisfying the general education" +   
+		   " requirements on time.  Even taking " + MAX_TERM_CREDIT_LOAD + " credits per Fall/Spring term does not seem sufficient.");
+		$("#gen-ed-credits-warning").addClass("text-danger");
+	} else if(genEdCreditsNeeded > totalCreditsUnderNormalLoad) {
+		$("#gen-ed-credits").addClass("text-warning");
+		$("#gen-ed-credits").removeClass("text-danger");
+		$("#gen-ed-credits-warning").addClass("text-warning");
+		$("#gen-ed-credits-warning").text("With your planned courses for this semester, it appears you will need to take overloads or summer courses" +   
+		   " in order to satisfy your general education requirements on time.  Beyond a normal " + NORMAL_TERM_CREDIT_LOAD + " credit per term load, you " + 
+		   "appear to need " +  parseInt(genEdCreditsNeeded - totalCreditsUnderNormalLoad) + " additional credits.");
+		$("#gen-ed-credits-warning").removeClass("text-danger");
+	} else {
+		$("#gen-ed-credits").removeClass("text-danger");
+		$("#gen-ed-credits").removeClass("text-warning");
+		$("#gen-ed-credits-warning").text("");
+		$("#gen-ed-credits-warning").removeClass("text-danger");
+		$("#gen-ed-credits-warning").removeClass("text-warning");
+	}
+
+	if(LASCreditsNeeded > totalCreditsUnderMaxLoad) {
+		$("#las-credits").addClass("text-danger");
+		$("#las-credits-warning").text("With your planned courses for this semester, you are in danger of not satisfying the LAS" +   
+		   " requirements on time.  Even taking " + MAX_TERM_CREDIT_LOAD + " credits per Fall/Spring term does not seem sufficient." + 
+		   " NOTE: This assumes " + REQUIRED_NUMBER_OF_LAS_CREDITS + " credits.  A B.S. degree only requires 60.");
+		$("#las-credits-warning").addClass("text-danger");
+	} else if(LASCreditsNeeded > totalCreditsUnderNormalLoad) {
+		$("#las-credits").addClass("text-warning");
+		$("#las-credits").removeClass("text-danger");
+		$("#las-credits-warning").addClass("text-warning");
+		$("#las-credits-warning").text("With your planned courses for this semester, it appears you will need to take overloads or summer courses" +   
+		   " in order to satisfy the LAS requirements on time.  Beyond a normal " + NORMAL_TERM_CREDIT_LOAD + " credit per term load, you " + 
+		   "appear to need " +  parseInt(LASCreditsNeeded - totalCreditsUnderNormalLoad) + " additional credits." + 
+		   " NOTE: This assumes " + REQUIRED_NUMBER_OF_LAS_CREDITS + " credits.  A B.S. degree only requires 60.");
+		$("#las-credits-warning").removeClass("text-danger");
+	} else {
+		$("#las-credits").removeClass("text-danger");
+		$("#las-credits").removeClass("text-warning");
+		$("#las-credits-warning").text("");
+		$("#las-credits-warning").removeClass("text-danger");
+		$("#las-credits-warning").removeClass("text-warning");
+	}
+
+	if(additionalCredits > totalCreditsUnderMaxLoad) {
+		$("#additional-credits").addClass("text-danger");
+		$("#additional-credits-warning").text("With your planned courses for this semester, you are in danger of not meeting the credit" +   
+		   " requirement on time.  Even taking " + MAX_TERM_CREDIT_LOAD + " credits per Fall/Spring term does not seem sufficient.");
+		$("#additional-credits-warning").addClass("text-danger");
+	} else if(additionalCredits > totalCreditsUnderNormalLoad) {
+		$("#additional-credits").addClass("text-warning");
+		$("#additional-credits").removeClass("text-danger");
+		$("#additional-credits-warning").addClass("text-warning");
+		$("#additional-credits-warning").text("With your planned courses for this semester, it appears you will need to take overloads or summer courses" +   
+		   " in order to satisfy the credit requirements on time.  Beyond a normal " + NORMAL_TERM_CREDIT_LOAD + " credit per term load, you " + 
+		   "appear to need " +  parseInt(additionalCredits - totalCreditsUnderNormalLoad) + " additional credits.");
+		$("#additional-credits-warning").removeClass("text-danger");
+	} else {
+		$("#additional-credits").removeClass("text-danger");
+		$("#additional-credits").removeClass("text-warning");
+		$("#additional-credits-warning").text("");
+		$("#additional-credits-warning").removeClass("text-danger");
+		$("#additional-credits-warning").removeClass("text-warning");
+	}
+
+	if(totalCreditsNeeded > totalCreditsUnderMaxLoad) {
+		$("#total-credits").addClass("text-danger");
+		$("#total-credits-warning").text("With your planned courses for this semester, you are in danger of not meeting the total credit" +   
+		   " requirement on time.  Even taking " + MAX_TERM_CREDIT_LOAD + " credits per Fall/Spring term does not seem sufficient.");
+		$("#total-credits-warning").addClass("text-danger");
+	} else if(totalCreditsNeeded > totalCreditsUnderNormalLoad) {
+		$("#total-credits").addClass("text-warning");
+		$("#total-credits").removeClass("text-danger");
+		$("#total-credits-warning").addClass("text-warning");
+		$("#total-credits-warning").text("With your planned courses for this semester, it appears you will need to take overloads or summer courses" +   
+		   " in order to satisfy the total credit requirements on time.  Beyond a normal " + NORMAL_TERM_CREDIT_LOAD + " credit per term load, you " + 
+		   "appear to need " +  parseInt(totalCreditsNeeded - totalCreditsUnderNormalLoad) + " additional credits.");
+		$("#total-credits-warning").removeClass("text-danger");
+	} else {
+		$("#total-credits").removeClass("text-danger");
+		$("#total-credits").removeClass("text-warning");
+		$("#total-credits-warning").text("");
+		$("#total-credits-warning").removeClass("text-danger");
+		$("#total-credits-warning").removeClass("text-warning");
+	}
+
+
+/*
+	$("#major-minor-credits").addClass("text-danger");
+
+	if(neededCredits > totalCreditsUnderMaxLoad)
+	{
+		warning = "You still need " + neededCredits + " credits.  Even taking " + MAX_TERM_CREDIT_LOAD + 
+		          " credits per term, it appears that you won't be able to graduate at the specified time "
+		          + "without taking summer courses.";
+	}
+
+	else if(neededCredits > totalCreditsUnderNormalLoad)
+	{
+		warning = "It appears that you won't be able to graduate at the specified time without taking summer " + 
+		          "courses or overloading.  Beyond a normal " + NORMAL_TERM_CREDIT_LOAD + " credit per term load, you need "
+		          + parseInt(neededCredits - totalCreditsUnderNormalLoad) + " additional credits.";
+	}
+*/
 	//alert("Major credits needed: " + majorCreditsNeeded + "\nAdditional General Education Credits needed:" + genEdCreditsNeeded + 
 	//	  "\nAdditional LAS Credits needed: " +  LASCreditsNeeded);
 
@@ -915,7 +1079,7 @@ function generateAdvice(courseInput)
 	var majorOne = courseInput.firstMajor;
 	var majorTwo = courseInput.secondMajor;
 	var minor = courseInput.minor;
-		getNeededCredits(courseHistoryItems, majorOne, majorTwo, minor);
+	getNeededCredits(courseInput.semestersToGraduate, courseHistoryItems, majorOne, majorTwo, minor);
 	var LASCourseItems = getLASCodes();
 	var passGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer"]; 
 	var adviceItems = [];
@@ -953,13 +1117,13 @@ function generateAdvice(courseInput)
 		                                         		return passGradeList.indexOf(courseItem.grade) != -1 || courseItem.grade == "WIP";
 		                                         	}));
 	//alert(earnedCreditCount);
-	var creditWarning = getCreditWarning(earnedCreditCount+creditsInProgress, courseInput.semestersToGraduate);
+	//var creditWarning = getCreditWarning(earnedCreditCount+creditsInProgress, courseInput.semestersToGraduate);
 	var genEdWarning = getGenEdWarning(courseHistoryItems);
 	adviceItems.push(majorMinorWarning);
 	adviceItems.push(genEdWarning);
-	adviceItems.push(creditWarning);
+	//adviceItems.push(creditWarning);
 	//adviceItems.push(getLASCreditWarning(LASCreditCount + LASCreditsInProgress, courseInput.semestersToGraduate));
-	adviceItems.push(getLASCreditWarning(LASCreditCount, courseInput.semestersToGraduate));
+	//adviceItems.push(getLASCreditWarning(LASCreditCount, courseInput.semestersToGraduate));
 
 	//alert("Depth: " + getCourseDepth("MAT", 115, 8, generateCourseCodeList(courseHistoryItems), 5));
 //alert(parseInt(getCourseWithCode("MAT", 232).offered));

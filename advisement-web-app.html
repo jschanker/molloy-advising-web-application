@@ -39,6 +39,7 @@
 						$(this).text("+");
 					}
 				});
+				generateReport();
 				$("#addHeader").click(addCourseRow);
 
 				addCourseRow();
@@ -79,6 +80,10 @@
 							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
 						}
 					});
+					generateReport();
+				});
+
+				$("#graduation-select").change(function() {
 					generateReport();
 				});
 			});
@@ -391,6 +396,7 @@
 				//$(numberCellId).append(numberSelect);
 				$("#" + courseRowIdPrefixStr + "-areaSelect").change(function() {
 					updateCourseRow(properties, rowId, true);
+					generateReport();
 					/*
 					selectedCourseArea = $(this).val();
 					$("#" + courseRowIdPrefixStr + "-numberSelect").empty();
@@ -441,6 +447,7 @@
 */
 				$("#" + courseRowIdPrefixStr + "-numberSelect").change(function() {
 					updateCourseRow(properties, rowId, false, true);
+					generateReport();
 				});
 
 /*
@@ -457,6 +464,7 @@
 */
 				$("#" + courseRowIdPrefixStr + "-sectionSelect").change(function() {
 					updateCourseRow(properties, rowId);
+					generateReport();
 				});
 
 				var removeCellId = "#" + courseRowIdPrefixStr + "-" + properties[10];
@@ -689,20 +697,73 @@
 				</div>
 				<div class = "row">
 					<div class = "col-md-12">
-						<label for = "credit-summary">Credit Summary (Semester's courses included)</label>:<BR>
+						<label for = "credit-summary">Required Credit Summary (Semester's courses included)</label>:<BR>
 						<div id = "credit-summary">
-							<label class = "subheading">Major/Minor and Related Requirements</label>: <span id = "major-minor-credits"></span><BR>
-							<label class = "subheading">Additional General Education</label>: <span id = "gen-ed-credits"></span><BR>
-							<label class = "subheading">Additional LAS (Assuming 90 for B.A.)</label>: <span id = "las-credits"></span><BR>
-							<label class = "subheading">Additional Credits To Meet 128</label>: <span id = "additional-credits"></span><BR>
-							<label class = "subheading">Total Credits Needed</label>: <span id = "total"></span>
+							<table id = "credit-table">
+								<tr>
+									<td>
+										<label class = "subheading">Major/Minor and Related Requirements:</label>
+									</td>
+									<td class = "num">
+										<span id = "major-minor-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "major-minor-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Additional General Education:</label>
+									</td> 
+									<td class = "num">
+										<span id = "gen-ed-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "gen-ed-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Additional LAS (Assuming 90 for B.A.):</label>
+									</td>
+									<td class = "num">
+										<span id = "las-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "las-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Additional Credits To Meet 128:</label> 
+									</td>
+									<td class = "num">
+										<span id = "additional-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "additional-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Total Credits Needed:</label>
+									</td>
+									<td class = "num">
+										<span id = "total-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "total-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+							</table>
 						</div>
 					</div>
 				</div>
 				<div class = "row">
 					<div class = "col-md-12">
 						<label for = "suggestion-box">
-							Suggestions/Warnings:
+							<!--Suggestions/Warnings:-->
+							Major/General Education Course Warnings:
 						</label>
 						<div id = "suggestion-box">
 							Information will appear here. 

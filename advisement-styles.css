@@ -25,7 +25,7 @@ label
 
 .subheading 
 {
-	padding-left:10px;
+	padding-left:0px;
 }
 
 #credit-summary
@@ -37,6 +37,24 @@ label
 	/*margin-left:10px;*/
 	/*margin-right:10px;*/
 	width:100%;
+}
+
+#credit-table
+{
+	border: 1px solid black;
+	font-size:120%;
+}
+
+#credit-table td
+{
+	padding:0px 5px;
+	/*text-align: right;*/
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.num {
+	text-align:right;
 }
 
 .toggle-border
