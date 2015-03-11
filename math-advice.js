@@ -15,7 +15,8 @@ function getMATMajorRequirements()
 
 	return {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,
-		    relatedCodes: relatedCodes
+		    relatedCodes: relatedCodes,
+		    isBA: true
 	};
 }
 
@@ -36,6 +37,34 @@ function getMATAdEdMajorRequirements()
 
 	return {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,
-		    relatedCodes: relatedCodes
+		    relatedCodes: relatedCodes,
+		    isBA: true
+	};
+}
+
+function getCISMajorRequirements()
+{
+	var majorName = "CIS";
+	var majorCodeNumbers = [[102, 105],[103],[112],[224],[235],[318],[339],[360],[460],[491],[100,255,390],[100,255,390]];
+	var relatedCodes = [["BUS  101"], ["BUS  260"], ["BUS  301"], ["BUS  330"], ["COM  110", "COM  114"], ["ENG  236"],
+						["ETH  257"], ["MAT  115"], ["MAT  116", "MAT  118"]];
+
+	return {majorName: majorName,
+		    majorCodeNumbers: majorCodeNumbers,
+		    relatedCodes: relatedCodes,
+		    isBA: false
+	};
+}
+
+function getCSCMajorRequirements()
+{
+	var majorName = "CSC";
+	var majorCodeNumbers = [[120],[121],[235],[229],[244],[323],[330],[340],[460],[491],[335,390],[335,390]];
+	var relatedCodes = [["MAT  115"], ["MAT  221"], ["MAT  222"], ["MAT  228"], ["MAT  232"]];
+
+	return {majorName: majorName,
+		    majorCodeNumbers: majorCodeNumbers,
+		    relatedCodes: relatedCodes,
+		    isBA: true
 	};
 }

@@ -10,6 +10,7 @@ function getBUSMgmtMajorRequirements()
 
 	return {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,
-		    relatedCodes: relatedCodes
+		    relatedCodes: relatedCodes,
+		    isBA:false
 	};
 }

@@ -3,8 +3,14 @@ function getMajorRequirements(subjectCode)
 	if(subjectCode.toLowerCase() == "bio")
 		return getBIOMajorRequirements();
 
-	if(subjectCode.toLowerCase() == "bus-mgmt")
+	else if(subjectCode.toLowerCase() == "bus-mgmt")
 		return getBUSMgmtMajorRequirements();
+
+	else if(subjectCode.toLowerCase() == "cis")
+		return getCISMajorRequirements();
+
+	else if(subjectCode.toLowerCase() == "csc")
+		return getCSCMajorRequirements();
 
 	else if(subjectCode.toLowerCase() == "mat")
 		return getMATMajorRequirements();

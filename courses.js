@@ -221,6 +221,20 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 	{
 		switch(codeNumber)
 		{
+			case 100:
+				return {
+					title: "Computer System Introduction",
+					prerequisites:[],
+					credits:3,
+					offered:8
+				};
+			case 102:
+				return {
+					title: "Computer Applications and CIS",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
 			case 103:
 				return {
 					title: "Visual Basic OOP",
@@ -235,12 +249,54 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:3,
 					offered:15
 				};
-			case 235:
+			case 112:
 				return {
-					title: "",
+					title: "Introduction to Web Design and Development",
 					prerequisites:[],
 					credits:3,
-					offered:15
+					offered:10
+				};
+			case 224:
+				return {
+					title: "Introduction to Database Management",
+					prerequisites:[],
+					credits:3,
+					offered:2
+				};
+			case 235:
+				return {
+					title: "Introduction to Web Scripting",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+			case 255:
+				return {
+					title: "Computer Ethics and Security",
+					prerequisites:[],
+					credits:3,
+					offered:0
+				};
+			case 318:
+				return {
+					title: "Analysis and Logical Design of an Information System",
+					prerequisites:[],
+					credits:3,
+					offered:4
+				};
+			case 335:
+				return {
+					title: "Programming Languages",
+					prerequisites:[],
+					credits:3,
+					offered:2
+				};
+			case 339:
+				return {
+					title: "Networks I - Local Area Networks",
+					prerequisites:[],
+					credits:3,
+					offered:4
 				};
 			case 360:
 				return {
@@ -249,12 +305,48 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:3,
 					offered:4
 				};
+			case 390:
+				return {
+					title: "CIS/CSC elective",
+					prerequisites:[],
+					credits:3,
+					offered:4
+				};
+			case 460:
+				return {
+					title: "Internship",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 491:
+				return {
+					title: "CIS Capstone Seminar",
+					prerequisites:[],
+					credits:3,
+					offered:2
+				};
 		}
 	}
-		if(courseAreaCode == "COM")
+
+	if(courseAreaCode == "COM")
 	{
 		switch(codeNumber)
 		{
+			case 110:
+				return {
+					title: "Experiences in Communication",
+					prerequisites: [],
+					credits:3,
+					offered:15
+				};
+			case 114:
+				return {
+					title: "Small Group Discussion",
+					prerequisites: [],
+					credits:3,
+					offered:15
+				};
 			case 229:
 				return {
 					title: "Experiences in Corporate Communications",
@@ -284,17 +376,101 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 				};
 			case 120:
 				return {
-					title: "",
+					title: "Programming I",
 					prerequisites:[],
 					credits:3,
 					offered:0
 				};
+			case 121:
+				return {
+					title: "Programming II",
+					prerequisites:["CSC  120"],
+					credits:3,
+					offered:0
+				};
+			case 224:
+				return {
+					title: "Introduction to Database Management",
+					prerequisites:[],
+					credits:3,
+					offered:2
+				};
+			case 229:
+				return {
+					title: "Discrete Mathematical Structures",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
 			case 235:
 				return {
-					title: "",
+					title: "Introduction to Web Scripting",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+			case 244:
+				return {
+					title: "Data Structures",
+					prerequisites:["CSC  121"],
+					credits:4,
+					offered:2
+				};
+			case 318:
+				return {
+					title: "Analysis and Logical Design of an Information System",
+					prerequisites:[],
+					credits:3,
+					offered:4
+				};
+			case 323:
+				return {
+					title: "Assembly Language and Systems Programming",
+					prerequisites:["CSC  121", "MAT  229", "MAT  228"],
+					credits:3,
+					offered:2
+				};
+			case 330:
+				return {
+					title: "Operating Systems",
+					prerequisites:["CSC  121"],
+					credits:3,
+					offered:1
+				};
+			case 335:
+				return {
+					title: "Programming Languages",
+					prerequisites:["CSC  120"],
+					credits:3,
+					offered:2
+				};
+			case 340:
+				return {
+					title: "Computer Architecture and Design",
+					prerequisites:["CSC  323"],
+					credits:3,
+					offered:1
+				};
+			case 390:
+				return {
+					title: "CIS/CSC elective",
+					prerequisites:[],
+					credits:3,
+					offered:4
+				};
+			case 460:
+				return {
+					title: "Internship",
 					prerequisites:[],
 					credits:3,
 					offered:15
+				};
+			case 491:
+				return {
+					title: "CSC Capstone Seminar",
+					prerequisites:[],
+					credits:3,
+					offered:1
 				};
 		}
 	}
@@ -343,6 +519,13 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					prerequisites:[],
 					credits:1,
 					offered:15
+				};
+			case 236:
+				return {
+					title: "Effective Business Writing",
+					prerequisites:[],
+					credits:3,
+					offered:10
 				};
 			case 238:
 				return {
@@ -451,7 +634,7 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					title: "Topics in Discrete Mathematics for Computer Science Majors",
 					prerequisites:[],
 					credits:3,
-					offered:10
+					offered:5
 				};
 			case 229:
 				return {

@@ -41,6 +41,7 @@
 				});
 				generateReport();
 				$("#addHeader").click(addCourseRow);
+				$("#addHeader").click(generateReport);
 
 				addCourseRow();
 
@@ -208,6 +209,7 @@
 				var courseRowId = "#course-row-" + num;
 				$(courseRowId).remove();
 				courseCount(-1);
+				generateReport();
 			}
 
 			function getCourseByAreaNumSection(area, number, section) {
@@ -555,12 +557,13 @@
 								First Major:
 							</label>
 							<select name = "first-major" id = "first-major-select" class="form-control" onChange = "removeDuplicateMajor()">
-								<!--<option value = "csc">B.A. Computer Science</option>-->
+								<option value = "none" SELECTED>Undeclared</option>
 								<option value = "bio">B.S. Biology (Core only - in progress)</option>
 								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
+								<option value = "csc">B.A. Computer Science</option>
+								<option value = "cis">B.S. Computer Information Systems</option>
 								<option value = "mat">B.A. Mathematics</option>
 								<option value = "mat-ed-adult">B.A. Mathematics - Adolescence Education (in progress - math only)</option>
-								<!--<option value = "cis">B.S. Computer Information Systems</option>-->
 							</select>
 						</div>
 					</div>
@@ -576,6 +579,8 @@
 								<option value = "none" SELECTED>None</option>
 								<option value = "bio">B.S. Biology (Core only - in progress)</option>
 								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
+								<option value = "csc">B.A. Computer Science</option>
+								<option value = "cis">B.S. Computer Information Systems</option>
 								<option value = "mat">B.A. Mathematics</option>
 								<option value = "mat-ed-adult">B.A. Mathematics - Adolescence Education (in progress - math only)</option>
 								<!--<option value = "other">Other</option>-->
@@ -724,7 +729,7 @@
 								</tr>
 								<tr>
 									<td>
-										<label class = "subheading">Additional LAS (Assuming 90 for B.A.):</label>
+										<label class = "subheading">Additional LAS (Assuming 90 for B.A., 60 for B.S.):</label>
 									</td>
 									<td class = "num">
 										<span id = "las-credits"><strong></strong></span>

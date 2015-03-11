@@ -817,7 +817,10 @@ function getCourseWarnings(courseInput)
 
 function getNeededCredits(semestersToGraduate, courseHistoryItems, majorOne, majorTwo, minor) {
 
-	var REQUIRED_NUMBER_OF_LAS_CREDITS = 90;
+	var REQUIRED_NUMBER_OF_LAS_CREDITS = (getMajorRequirements(majorOne).isBA || 
+		                                  getMajorRequirements(majorOne).isBA ||
+		                                  getMajorRequirements(majorOne).isBA === undefined) ? 90 : 60;
+
 	var NUM_OF_CREDITS
 	var majorMinorRequirementsNeeded = getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, minor);
 	var majorMinorCourseRequirementsList = convertMajorMinorRequirementsToCourseItemList(majorMinorRequirementsNeeded);
