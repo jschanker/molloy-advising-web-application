@@ -9,6 +9,9 @@ function getMajorRequirements(subjectCode)
 	else if(subjectCode.toLowerCase() == "cis")
 		return getCISMajorRequirements();
 
+	else if(subjectCode.toLowerCase() == "com-nm")
+		return getCOMNMMajorRequirements();
+
 	else if(subjectCode.toLowerCase() == "csc")
 		return getCSCMajorRequirements();
 

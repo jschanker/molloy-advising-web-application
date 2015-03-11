@@ -347,6 +347,34 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:3,
 					offered:15
 				};
+			case 211:
+				return {
+					title: "Gender and Communication",
+					prerequisites: [],
+					credits:3,
+					offered:15
+				};
+			case 213:
+				return {
+					title: "Intercultural Communication",
+					prerequisites: [],
+					credits:3,
+					offered:15
+				};
+			case 222:
+				return {
+					title: "Media, Culture, and Society",
+					prerequisites: [],
+					credits:3,
+					offered:15
+				};
+			case 228:
+				return {
+					title: "Writing for the Web",
+					prerequisites: [],
+					credits:3,
+					offered:10
+				};
 			case 229:
 				return {
 					title: "Experiences in Corporate Communications",
@@ -359,6 +387,146 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					title: "Public Speaking for Business",
 					prerequisites:[],
 					credits:1,
+					offered:15
+				};
+			case 240:
+				return {
+					title: "Audiences and the Music Industry",
+					prerequisites:[],
+					credits:3,
+					offered:5
+				};
+			case 242:
+				return {
+					title: "Television Production for Non-majors",
+					prerequisites:[],
+					credits:3,
+					offered:5
+				};
+			case 243:
+				return {
+					title: "Introduction to New Media",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 244:
+				return {
+					title: "Online Content Production",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 246:
+				return {
+					title: "Civic Engagement with New Media",
+					prerequisites:[],
+					credits:3,
+					offered:5
+				};
+			case 247:
+				return {
+					title: "Sports Communication",
+					prerequisites:[],
+					credits:1,
+					offered:15
+				};
+			case 248:
+				return {
+					title: "Online Journalism",
+					prerequisites:[],
+					credits:3,
+					offered:5
+				};
+			case 252:
+				return {
+					title: "Television Studio Production",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 254:
+				return {
+					title: "Public Relations",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 255:
+				return {
+					title: "Public Relations Writing",
+					prerequisites:[],
+					credits:3,
+					offered:5
+				};
+			case 256:
+				return {
+					title: "Field Production",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+			case 259:
+				return {
+					title: "Introduction to Advertising",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+			case 309:
+				return {
+					title: "History of Digital Media",
+					prerequisites:["COM  243"],
+					credits:3,
+					offered:10
+				};
+			case 310:
+				return {
+					title: "Video Storytelling for the Web",
+					prerequisites:["COM  244"],
+					credits:3,
+					offered:5
+				};
+			case 354:
+				return {
+					title: "Foundations of Media Theory",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+			case 381:
+				return {
+					title: "Digital Applications for New Media",
+					prerequisites:["COM  244"],
+					credits:3,
+					offered:4
+				};
+			case 468:
+				return {
+					title: "Communications Internship",
+					prerequisites:[],
+					credits:3,
+					offered:10
+				};
+			case 488:
+				return {
+					title: "Research in Communications",
+					prerequisites:["COM  354"],
+					credits:3,
+					offered:10
+				};
+			case 490:
+				return {
+					title: "Communications Seminar",
+					prerequisites:["COM  488"],
+					credits:3,
+					offered:5
+				};
+			case 900:
+				return {
+					title: "Communications 200-level elective or above",
+					prerequisites:[],
+					credits:3,
 					offered:15
 				};
 		}
