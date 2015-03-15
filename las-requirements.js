@@ -1,5 +1,9 @@
-function getLASCodes()
+"use strict";
+
+(function(namespace)
 {
+	// formerly getLASCodes function
+
 	var LASString = "Liberal Arts & Science Courses as of 3.7.14"+ 
 	"Course,Title,Degree Audit Code"+ 
 	"\nARA  101,Beginning Arabic I,ARA101"+
@@ -962,11 +966,13 @@ function getLASCodes()
 	var LASCourses = LASString.split("\n");
 	var LASCodes = [];
 
-	for(i = 0; i < LASCourses.length; i++)
+	for(var i = 0; i < LASCourses.length; i++)
 	{
 		LASCodes.push(LASCourses[i].substring(0,LASCourses[i].indexOf(",")));
 	}
-	return LASCodes;
-}
+
+	namespace.exports = LASCodes;
+
+})(provide("las"));
 
 //alert(LASString.substring(0,1000) + "\n" + codes[948]);

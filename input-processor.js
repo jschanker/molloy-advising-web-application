@@ -1,3 +1,5 @@
+var LASCodes = require("las");
+
 function hasElementWithSubstring(sub)
 {
 
@@ -789,7 +791,7 @@ function getCourseWarnings(courseInput)
 		}
 	}
 
-	if( !isCourseItemInList(courseItem, getLASCodes()) )
+	if( !isCourseItemInList(courseItem, LASCodes) )
 		warnings.push("Not an LAS");
 
 	if(courseDescription) {
@@ -858,7 +860,7 @@ function getNeededCredits(semestersToGraduate, courseHistoryItems, majorOne, maj
 	var genEdCreditsNeeded = getTotal(genEdCategoriesAndCreditsNeeded, "credits");
 
 	var LASCreditsNeeded = Math.max(REQUIRED_NUMBER_OF_LAS_CREDITS - 
-							getNumOfCredits(coursesWithAllMajorMinorRequirements, getLASCodes(), isPassingGradeFunction, isTransferCourse) - 
+							getNumOfCredits(coursesWithAllMajorMinorRequirements, LASCodes, isPassingGradeFunction, isTransferCourse) - 
 							genEdCreditsNeeded, 0); // All general education courses count for LAS
 
 	// jQuery code should not be here nor should warnings!  Wow, this has gotten messy!
@@ -1083,7 +1085,7 @@ function generateAdvice(courseInput)
 	var majorTwo = courseInput.secondMajor;
 	var minor = courseInput.minor;
 	getNeededCredits(courseInput.semestersToGraduate, courseHistoryItems, majorOne, majorTwo, minor);
-	var LASCourseItems = getLASCodes();
+	var LASCourseItems = LASCodes;
 	var passGradeList = ["A", "A-", "B+", "B", "B-", "C+", "C", "C-", "D+", "D", "Transfer"]; 
 	var adviceItems = [];
 
