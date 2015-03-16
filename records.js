@@ -1,16 +1,31 @@
 "use strict";
 
-// Future module for maintaining consistent data format
-(function(exports) {
+// Module for maintaining consistent data format for courses
+// and functions to manipulate them
 
-	exports.Course = function(areaCode, area, info) {
-		this.areaCode = areaCode;
-		this.area = area;
+(function(namespace) {
+
+	namespace.exports.Course = function(areaCode, number, info) {
+		this._areaCode = areaCode;
+		this._number = number;
+		this._info = info;
 	};
 
-	exports.Course.prototype.makeCourseCode = function(area, courseNum) {
+	namespace.exports.Course.prototype.addInfo = function(info, overwriteConflicting) {
+		for(property in info) {
+			if(!(property in this._info) || overwriteConflicting) {
+				this._info[property] = info[property];
+			}
+		}
+	}
+
+	namespace.exports.Course.prototype.makeCourseCode = function() {
+		return this._areaCode + "  " + this._number;
+	}
+
+	/*namespace.exports.Course.prototype.makeCourseCode = function(area, courseNum) {
 		return area + "  " + courseNum;
-	};
+	};*/
 
 	function Record(course, grade) {
 		this.course = course;
@@ -21,3 +36,9 @@
 		this.records_ = [];
 	}
 })(provide("records"));
+
+/*
+var rec = require("records");
+var c = new rec.Course("ABC", "DEF", {});
+console.log("C: " + c._area);
+*/

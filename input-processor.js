@@ -1,9 +1,32 @@
-var LASCodes = require("las");
+//var LASCodes = require("las");
+var db = require("connection");
+var registrar = require("registrar");
+var records = require("records");
+var LASDB = new db.Connection(registrar.getLASDatabaseName());
+var LASCodes = LASDB.find(registrar.getLASCollectionName()).map(function(course) {
+	return course.makeCourseCode(); // simplify to makeCourseCode when conflicting function below is removed
+});
 
+/*
+var orig = LASDB.find(registrar.getLASCollectionName());
+var modify = orig.filter(function(a) { return true; });
+modify[0]._areaCode = "Changed!";
+alert(orig[0]._areaCode);
+*/
+/*(function(course) {
+	return Object.getPrototypeOf(course);
+});//.map(records.Course.prototype.makeCourseCode);
+console.log(LASCodes);*/
+//LASCodes = [];
+//alert(records.Course.prototype.makeCourseCode);
+//alert(LASCodes);
+
+/*
 function hasElementWithSubstring(sub)
 {
 
 }
+*/
 
 function getMatch(arr, regex)
 {
@@ -17,6 +40,7 @@ function getMatch(arr, regex)
 	return -1;
 }
 
+/*
 function hasCommonElement(arr1, arr2)
 {
 	// returns true iff arr1 and arr2 have a common element
@@ -28,6 +52,7 @@ function hasCommonElement(arr1, arr2)
 
 	return false;
 }
+*/
 
 function getCommonElement(arr1, arr2)
 {
@@ -150,6 +175,7 @@ function getNumOfCredits(courseHistoryItems, courseList, criteriaFunction, dupli
 }
 */
 
+/*
 function getCourseItems(courseHistoryItems, courseList, criteriaFunction)
 {
 	// returns an array of course items taken in courseList
@@ -171,6 +197,7 @@ function getCourseItems(courseHistoryItems, courseList, criteriaFunction)
 	}
 	return courseItems;
 }
+*/
 
 function generateCourseCodeList(courseItems, criteriaFunction)
 {

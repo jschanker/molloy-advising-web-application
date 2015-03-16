@@ -29,12 +29,36 @@
 		if(Array.isArray(documents)) {
 			documents.forEach(function(documentItem) {
 				documentItem._id = documentItem._id || id;
+				id++;
 			});
 			Array.prototype.push.apply(this._documents, documents);
 		} else {
 			documents._id = documents._id || id;
 			this._documents.push(documents);
 		}
+	}
+
+	Collection.prototype.find = function(criteriaFunction, projectionFunction) {
+		// for now, query short-circuited with criteriaFunction
+		// projections also short-circuited with projectionFunction
+		// only shallow projections implemented for now but commented out for now
+		// projections change the object's type
+		// returns all documents in collection that meet criteriaFunction
+
+		criteriaFunction = criteriaFunction ? criteriaFunction : function(documentItem) { return true; };
+		projectionFunction = projectionFunction ? projectionFunction : function(field) { return true; };
+
+		return this._documents.filter(criteriaFunction);/*.map(function(documentItem) { 
+			var partialDocument = {};
+			//var fields = Object.keys(documentItem);
+			for(var field in documentItem) {
+				if(documentItem.hasOwnProperty(field) && projectionFunction(field)) {
+					partialDocument[field] = documentItem[field];
+				}
+			}
+
+			return partialDocument;
+		});*/
 	}
 
 	var Database = function(name) {
@@ -48,13 +72,16 @@
 	}
 
 	Database.prototype.getCollectionByName = function(name) {
-		return this._collectionsByName[name];
+		return this.addCollection(name);
 	}
 
 	Database.prototype.addCollection = function(collectionName) {
+		// add collection if it doesn't already exist and return collection
 		if(!(collectionName in this._collectionsByName)) {
 			this._collectionsByName[collectionName] = new Collection(collectionName);
 		}
+
+		return this._collectionsByName[collectionName];
 	}
 
 	namespace.exports.Connection = function(databaseName) {
@@ -63,7 +90,7 @@
 
 	namespace.exports.Connection.prototype.insert = function(collectionName, documents) {
 		this._database.getCollectionByName(collectionName).insert(documents);
-		console.log(this._database.getCollectionByName(collectionName)._documents);
+		//console.log(this._database.getCollectionByName(collectionName)._documents);
 	};
 
 	namespace.exports.Connection.prototype.show = function(type) {
@@ -88,8 +115,17 @@
 		this._database.addCollection(name);
 	};
 
+	namespace.exports.Connection.prototype.find = function(collectionName, criteriaFunction, projectionFunction) {
+		return this._database.getCollectionByName(collectionName).find(criteriaFunction, projectionFunction);
+	};
+
+	namespace.exports.Connection.prototype.logCollection = function(name) {
+		console.log(this._database.getCollectionByName(name)._documents);
+	};
+
 })(provide("connection"));
 
+/*
 var connect = require("connection");
 var c = new connect.Connection("abc");
 var d = new connect.Connection("def");
@@ -98,3 +134,4 @@ d.createCollection("Y");
 d.insert("X", [{"abc": 5}, {_id: "xyz", def: "abc"}]);
 d.insert("X", {"a": 10});
 console.log(d.show("collections"));
+*/

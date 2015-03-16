@@ -4,9 +4,9 @@
 {
 	// formerly getLASCodes function
 
-	var LASString = "Liberal Arts & Science Courses as of 3.7.14"+ 
-	"Course,Title,Degree Audit Code"+ 
-	"\nARA  101,Beginning Arabic I,ARA101"+
+	namespace.exports = //"Liberal Arts & Science Courses as of 3.7.14"+ 
+	//"Course,Title,Degree Audit Code\n"+ 
+	"ARA  101,Beginning Arabic I,ARA101"+
 	"\nARA  102,Beginning Arabic II,ARA102"+
 	"\nARA  201,Beginning Arabic III,ARA201"+
 	"\nARA  390,Topics in Arabic,ARA390"+
@@ -963,6 +963,7 @@
 	"\nTHE  GNED,Theology General Ed,THEGNED"+
 	"\nTHE  MAJR,Theology Major,THEMAJR";
 
+/*
 	var LASCourses = LASString.split("\n");
 	var LASCodes = [];
 
@@ -972,6 +973,7 @@
 	}
 
 	namespace.exports = LASCodes;
+*/
 
 })(provide("las"));
 
