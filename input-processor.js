@@ -1,11 +1,13 @@
 //var LASCodes = require("las");
 var db = require("connection");
-var registrar = require("registrar");
+var dbnames = require("dbnames");
+//var registrar = require("registrar");
 var records = require("records");
-var LASDB = new db.Connection(registrar.getLASDatabaseName());
-var LASCodes = LASDB.find(registrar.getLASCollectionName()).map(function(course) {
+var LASDB = new db.Connection(dbnames.LAS_COURSE_DB_NAME);
+var LASCodes = LASDB.find(dbnames.LAS_COURSE_COLLECTION_NAME).map(function(course) {
 	return course.makeCourseCode(); // simplify to makeCourseCode when conflicting function below is removed
 });
+var courseData = require("course-data");
 
 /*
 var orig = LASDB.find(registrar.getLASCollectionName());
@@ -359,7 +361,7 @@ function getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, mino
 				removeCourseItemFromList(unusedCountingMajorCourses, possibleCourses[useIndex]);
 			} else if(neededCourseSelection.length > 0) {
 				neededMajorAndMinorCourses.majorsRequirements[majorIndex].push(
-					{ info:getCourseWithCode(majorAreaCode, codeList[useIndex]),
+					{ info:courseData.getCourseWithCode(majorAreaCode, codeList[useIndex]),
 					 area: majorAreaCode, codeNumber:codeList[useIndex] } );
 			}
 		});
@@ -379,7 +381,7 @@ function getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, mino
 				removeCourseItemFromList(countingRelatedCourses, possibleCourses[useIndex]);
 			} else if(codeList.length > 0) {
 				neededMajorAndMinorCourses.relatedsRequirements[majorIndex].push(
-					{ info:getCourseWithCode(codeList[useIndex].split("  ")[0].trim(), parseInt(codeList[useIndex].split("  ")[1].trim())),
+					{ info:courseData.getCourseWithCode(codeList[useIndex].split("  ")[0].trim(), parseInt(codeList[useIndex].split("  ")[1].trim())),
 					 area: codeList[useIndex].split("  ")[0], codeNumber:codeList[useIndex].split("  ")[1] } );
 			}
 		});
@@ -489,7 +491,7 @@ function getCourseDepth(courseAreaCode, courseNumber, startSemesterOffset, taken
 	// of 2 or 3 since you need to wait until Spring of 2016 to take course C if you don't take it in Spring
 	// 2015.
 
-	var courseItem = getCourseWithCode(courseAreaCode, courseNumber);
+	var courseItem = courseData.getCourseWithCode(courseAreaCode, courseNumber);
 	//alert(courseItem.prerequisites);
 	var courseCode = makeCourseCode(courseAreaCode, courseNumber);
 	var maxNumOfSemesters = startSemesterOffset;
@@ -761,7 +763,7 @@ function getCourseWarnings(courseInput)
 			grade:           "WIP"
 		};
 
-	var courseDescription = getCourseWithCode(courseInfo.area, parseInt(courseInfo.number));
+	var courseDescription = courseData.getCourseWithCode(courseInfo.area, parseInt(courseInfo.number));
 
 	var warnings = [];
 	var courseHistoryItems = parseCourseHistory(courseInput.courseHistory);

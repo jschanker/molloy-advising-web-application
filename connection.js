@@ -84,6 +84,13 @@
 		return this._collectionsByName[collectionName];
 	}
 
+	Database.prototype.removeCollection = function(collectionName) {
+		// remove collection if it exists
+		if(collectionName in this._collectionsByName) {
+			this._collectionsByName[collectionName] = undefined;
+		}
+	}
+
 	namespace.exports.Connection = function(databaseName) {
 		this.use(databaseName);
 	};
@@ -114,6 +121,10 @@
 	namespace.exports.Connection.prototype.createCollection = function(name) {
 		this._database.addCollection(name);
 	};
+
+	namespace.exports.Connection.prototype.removeCollection = function(name) {
+		this._database.removeCollection(name);
+	}
 
 	namespace.exports.Connection.prototype.find = function(collectionName, criteriaFunction, projectionFunction) {
 		return this._database.getCollectionByName(collectionName).find(criteriaFunction, projectionFunction);

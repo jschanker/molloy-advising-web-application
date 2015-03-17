@@ -123,13 +123,15 @@
 		if(!namespace.exports.Connection[dbName]) {
 			namespace.exports.Connection[dbName]._collections = [];
 		}
-		
+
 		this._dbName = dbName;
 	};
 
 	namespace.exports.Connection.show = function(type) {
 		if(type === "dbs") {
-			return this;
+			for(key in namespace.exports.Connection) {
+
+			}
 		} else if(type === "collections") {
 			return this._collections;
 		} else {
@@ -139,6 +141,10 @@
 
 	namespace.exports.Connection.createCollection = function(name) {
 		namespace.exports.Connection[name] = new Collection();
+	}
+
+	namespace.exports.Connection.removeCollection = function(name) {
+		//namespace.exports.Connection[]
 	}
 
 	//namespace.exports.LASCourses = new Collection(las); 

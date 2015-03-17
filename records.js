@@ -10,13 +10,21 @@
 		this._number = number;
 		this._info = info;
 	};
-
+/*
+	namespace.exports.Course.setLAS = function(isLAS) {
+		this._isLAS = true;
+	}
+*/
 	namespace.exports.Course.prototype.addInfo = function(info, overwriteConflicting) {
-		for(property in info) {
+		for(var property in info) {
 			if(!(property in this._info) || overwriteConflicting) {
 				this._info[property] = info[property];
 			}
 		}
+	}
+
+	namespace.exports.Course.prototype.hasSameCodeAs = function(otherCourse) {
+		return this._areaCode == otherCourse._areaCode && parseInt(this._number) == parseInt(otherCourse._number);
 	}
 
 	namespace.exports.Course.prototype.makeCourseCode = function() {
@@ -27,9 +35,9 @@
 		return area + "  " + courseNum;
 	};*/
 
-	function Record(course, grade) {
-		this.course = course;
-		this.grade = grade;
+	function Record(course, gradeInfo) {
+		this._course = course;
+		this._gradeInfo = gradeInfo;
 	}
 
 	function Transcript() {
