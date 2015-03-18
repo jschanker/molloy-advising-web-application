@@ -22,17 +22,22 @@
 		<script src = "las-requirements.js"></script>
 		<script src = "gened-requirements.js"></script>
 		<script src = "courses.js"></script>
+		<script src = "course-data.js"></script>
+		<script src = "fall15-course-data.js"></script>
 		<script src = "registrar.js"></script>
+		<script src = "progress-calculator.js"></script>
 		<script src = "biology-advice.js"></script>
 		<script src = "business-advice.js"></script>
 		<script src = "com-advice.js"></script>
 		<script src = "math-advice.js"></script>
 		<script src = "majors.js"></script>
 		<script src = "input-processor.js"></script>
-		<script src = "fall15-course-data.js"></script>
 		<script src = "jquery/1.11.1/jquery.min.js"></script>
 		<script>
 		"use strict";
+
+		var nextSemesterCourses = require("next-semester-courses");
+		var courseProcessor = require("course-processor");
 
 			$(document).ready(function() {
 				$("h1").slideToggle().slideToggle();
@@ -136,7 +141,7 @@
 					plannedCourseItems: packagePlannedCourseItems()
 				};
 
-				var responseItems = generateAdvice(courseInput);
+				var responseItems = courseProcessor.generateAdvice(courseInput);
 				//var responseItems = parseCourseHistory(courseHistory);
 				var responseHTML = "<ol>\n";
 
@@ -165,7 +170,7 @@
 			}
 
 			var getCourseListByArea = (function(){
-				var courses = JSON.parse(getCurrentCourses());
+				var courses = JSON.parse(nextSemesterCourses);
 				var coursesByArea = {};
 				
 				courses.forEach(function(course) {
@@ -352,7 +357,7 @@
 				};
 
 				$("#" + courseRowIdPrefixStr + "-" + properties[9]).empty();
-				getCourseWarnings(courseInput).forEach(function(warningCode) {
+				courseProcessor.getCourseWarnings(courseInput).forEach(function(warningCode) {
 					$("#" + courseRowIdPrefixStr + "-" + properties[9]).append("<strong class = 'text-warning text-uppercase'>" + warningCode + "</strong><br>\n");
 				});
 			}
@@ -488,7 +493,7 @@
 
 			function addCourseSelections()
 			{
-				var courses = JSON.parse(getCurrentCourses());
+				var courses = JSON.parse(nextSemesterCourses);
 				var coursesByArea = {};
 
 				courses.forEach(function(course) {

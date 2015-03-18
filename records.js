@@ -27,6 +27,12 @@
 		return this._areaCode == otherCourse._areaCode && parseInt(this._number) == parseInt(otherCourse._number);
 	}
 
+/*
+	namespace.exports.Course.prototype.hasCode = function(areaCode, number, course) {
+		return course._areaCode == areaCode && parseInt(course._number) == number;
+	}
+*/
+
 	namespace.exports.Course.prototype.makeCourseCode = function() {
 		return this._areaCode + "  " + this._number;
 	}

@@ -26,6 +26,7 @@
 	var records = require("records");
 	var las = require("las");
 	var allCourses = require("course-data");
+	var nextSemesterCourses = require("next-semester-courses");
 
 	var getLASCourses = function() {
 		var LASCourseLines = las.split("\n");
@@ -41,10 +42,12 @@
 
 	};
 
-	var enterAllCourses = function() {
+/*
+	var getAllCourses = function() {
 		// hack: fix course-data
 		var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		var database = new db.Connection(dbnames.ALL_COURSES_DB_NAME);
+		var courseList = [];
 
 		for(var firstLetterIndex = 0; firstLetterIndex < ALPHABET.length; firstLetterIndex++) {
 			for (var secondLetterIndex = 0; secondLetterIndex < ALPHABET.length; secondLetterIndex++) {
@@ -53,8 +56,12 @@
 						var courseAreaCode = ALPHABET[firstLetterIndex] + ALPHABET[secondLetterIndex] + 
 						   ALPHABET[thirdLetterIndex];
 						var courseInfo = allCourses.getCourseWithCode(courseAreaCode, number);
-						var courseItem = new records.Course(courseAreaCode, number, courseInfo); 
-
+						//var courseItem = new records.Course(courseAreaCode, number, courseInfo);
+						if(courseInfo != allCourses.NA_COURSE) {
+							courseList.push(new records.Course(courseAreaCode, number, courseInfo));
+						} 
+*/
+/*
 						if(courseInfo != allCourses.NA_COURSE) {
 							var commonCourses = database.find(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
 							//console.log("A: " + courseItem.hasSameCodeAs.bind(courseItem)(new records.Course("CIS", 103)));
@@ -67,10 +74,39 @@
 								database.insert(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem);
 							}
 						}
+*/
+/*
 					}
 				}
 			}
 		}
+
+		return courseList;
+	}
+*/
+
+	function getMatch(arr, regex)
+	{
+		// returns first element in array matching the regular expression regex
+		for(var i = 0; i < arr.length; i++)
+		{
+			if(arr[i].match(regex))
+				return arr[i];
+		}
+
+		return -1;
+	}
+
+	function getCommonElement(arr1, arr2)
+	{
+		// returns common element in arr1 and arr2 if one exists; otherwise returns empty string
+		for(var i = 0; i < arr1.length; i++)
+		{
+			if(arr2.indexOf(arr1[i]) != -1)
+				return arr1[i];
+		}
+
+		return "";
 	}
 
 	var parseCourseHistory = function(courseHistory)
@@ -92,6 +128,10 @@
 		return transcript;
 	};
 
+//	var enterCoursesDataFromJSON = function(courseData) {
+
+//	}
+
 	namespace.exports.enterGradeHistory = function(courseHistory) {
 		var transcript = parseCourseHistory(courseHistory);
 		var database = new db.Connection(dbnames.COURSE_HISTORY_DB_NAME);
@@ -101,14 +141,42 @@
 
 	namespace.exports.enterData = function() {
 		var LASCourses = getLASCourses();
+		console.log(allCourses);
+		var coursesFromCourseData = JSON.parse(allCourses);
+		var futureCourses = JSON.parse(nextSemesterCourses);
 
 		var database = new db.Connection(dbnames.LAS_COURSE_DB_NAME);
 		database.insert(dbnames.LAS_COURSE_COLLECTION_NAME, LASCourses);
+
+		coursesFromCourseData.forEach(function(courseObj) {
+			var courseItem = new records.Course(courseObj._areaCode, courseObj._number, courseObj._info);
+			var commonCourses = database.find(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
+			if(commonCourses.length > 0) {
+				commonCourses[0].addInfo(courseObj._info, true);
+			} else {
+				courseItem.addInfo({isLAS: false}, false);
+				database.insert(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem);
+			}
+		});
+
+		futureCourses.forEach(function(courseObj) {
+			var courseItem = new records.Course(courseObj.area, courseObj.number, courseObj);
+			var commonCourses = database.find(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
+			if(commonCourses.length > 0) {
+				commonCourses[0].addInfo(courseObj, false);
+			} else {
+				courseItem.addInfo({isLAS: false}, false);
+				database.insert(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem);
+			}
+		});
+
+		//var database = new db.Connection(dbnames.LAS_COURSE_DB_NAME);
+		//database.insert(dbnames.LAS_COURSE_COLLECTION_NAME, LASCourses);
+
 		//database.logCollection("las");
 		//LASCourses[115]._info.title = "Changed";
 		//console.log(LASCourses[115]._areaCode);
-
-		enterAllCourses();
+		//console.log(JSON.stringify(getAllCourses()));
 
 		console.log(database.find(dbnames.LAS_COURSE_COLLECTION_NAME, function(course) {return course._areaCode == "MAT"},
 			function(field) { return field == "_areaCode" || field == "_number" || field == "_info"}));

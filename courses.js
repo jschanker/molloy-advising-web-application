@@ -983,4 +983,4 @@
 
 		return namespace.exports.NA_COURSE;
 	};
-})(provide("course-data"));
+})(provide("course-data-function"));
