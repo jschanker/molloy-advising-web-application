@@ -10,17 +10,35 @@
 		this._number = number;
 		this._info = info;
 	};
+
+	var Course = namespace.exports.Course;
+
+	namespace.exports.Course.COURSE_DEFAULT = new Course("N/A", 900, {title: "Course Not Found", prerequisites:[], credits:3, offered:15});
+	Object.freeze(namespace.exports.Course.COURSE_DEFAULT);
 /*
 	namespace.exports.Course.setLAS = function(isLAS) {
 		this._isLAS = true;
 	}
 */
+
+	namespace.exports.Course.makeCourseFromCode = function(code) {
+		var pair = code.split("  ");
+		return pair.length == 2 ? new Course(pair[0], parseInt(pair[1])) : Course.COURSE_DEFAULT;
+	}
+
 	namespace.exports.Course.prototype.addInfo = function(info, overwriteConflicting) {
 		for(var property in info) {
 			if(!(property in this._info) || overwriteConflicting) {
 				this._info[property] = info[property];
 			}
 		}
+	}
+
+	namespace.exports.CourseSelection = function(courseList, numOfCourses, numOfCredits) {
+		// list of courses from which numOfCourses is needed and numOfCredits is needed
+		this.courseList = courseList;
+		this.numOfCourses = numOfCourses;
+		this.numOfCredits = numOfCredits;
 	}
 
 	namespace.exports.Course.prototype.hasSameCodeAs = function(otherCourse) {

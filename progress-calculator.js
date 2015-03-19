@@ -38,16 +38,22 @@
 		if(takenCourseCodes.indexOf(courseCode) != -1)
 			return startSemesterOffset;
 
-		courseItem._info.prerequisites.forEach(function(prerequisiteCourseCode) {
-			var prerequisiteCourseAreaCode = prerequisiteCourseCode.substring(0, prerequisiteCourseCode.indexOf(" "));
-			var prerequisiteCourseNumber = parseInt(prerequisiteCourseCode.substring(prerequisiteCourseCode.indexOf("  ")+2));
-			var neededSemesters = namespace.exports.getCourseDepth(new records.Course(prerequisiteCourseAreaCode, prerequisiteCourseNumber), 
-			                                 	startSemesterOffset, takenCourseCodes, maxDepth-1);
-			if(neededSemesters > maxNumOfSemesters)
-			{
-				maxNumOfSemesters = neededSemesters;
-			}
-		});
+		//courseItem._info.prerequisites.forEach(function(prerequisiteCourseCode) {
+			//var prerequisiteCourseAreaCode = prerequisiteCourseCode.substring(0, prerequisiteCourseCode.indexOf(" "));
+			//var prerequisiteCourseNumber = parseInt(prerequisiteCourseCode.substring(prerequisiteCourseCode.indexOf("  ")+2));
+			//var neededSemesters = namespace.exports.getCourseDepth(new records.Course(prerequisiteCourseAreaCode, prerequisiteCourseNumber), 
+			//                                 	startSemesterOffset, takenCourseCodes, maxDepth-1);
+
+		if(courseItem._info.prerequisites) {
+			courseItem._info.prerequisites.forEach(function(prerequisite) {
+				var neededSemesters = namespace.exports.getCourseDepth(prerequisite, 
+			                                 	startSemesterOffset, takenCourseCodes, maxDepth-1);	
+				if(neededSemesters > maxNumOfSemesters)
+				{
+					maxNumOfSemesters = neededSemesters;
+				}
+			});
+		}
 
 		if((parseInt(courseItem._info.offered) & 15) == 0) {
 			return 100+maxNumOfSemesters; // course is never offered or invalid offered 4-bit string

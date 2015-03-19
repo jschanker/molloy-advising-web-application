@@ -14,6 +14,7 @@
 	});
 	var courseData = require("course-data-function");
 	var progressCalculator = require("progress-calculator");
+	var getMajorRequirements = require("major-requirements");
 
 	/*
 	var orig = LASDB.find(registrar.getLASCollectionName());
@@ -348,7 +349,7 @@
 		var isCountingGradeForRelatedFunc = generateMatchingGradeFunction( getCountingGradeList("PASSING_TRANS_WIP") );
 		var isCountingGradeForMajorFunc = generateMatchingGradeFunction( getCountingGradeList("MAJOR_TRANS_WIP") );
 
-		var majorAndRelatedRequirements = [getMajorRequirements(majorOne), getMajorRequirements(majorTwo)];
+		var majorAndRelatedRequirements = [getMajorRequirements[majorOne], getMajorRequirements[majorTwo]];
 		var unusedCountingMajorCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForMajorFunc);
 		//var countingRelatedCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForRelatedFunc);
 		//var unusedCountingRelatedCourses = getCourseList(courseHistoryItems, undefined, isCountingGradeForRelatedFunc);
@@ -858,9 +859,9 @@
 
 	function getNeededCredits(semestersToGraduate, courseHistoryItems, majorOne, majorTwo, minor) {
 
-		var REQUIRED_NUMBER_OF_LAS_CREDITS = (getMajorRequirements(majorOne).isBA || 
-			                                  getMajorRequirements(majorOne).isBA ||
-			                                  getMajorRequirements(majorOne).isBA === undefined) ? 90 : 60;
+		var REQUIRED_NUMBER_OF_LAS_CREDITS = (getMajorRequirements[majorOne].isBA || 
+			                                  getMajorRequirements[majorOne].isBA ||
+			                                  getMajorRequirements[majorOne].isBA === undefined) ? 90 : 60;
 
 		var NUM_OF_CREDITS
 		var majorMinorRequirementsNeeded = getNeededMajorMinorCourses(courseHistoryItems, majorOne, majorTwo, minor);

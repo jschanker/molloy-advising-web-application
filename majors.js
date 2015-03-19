@@ -1,3 +1,30 @@
+"use strict";
+
+(function(namespace) {
+
+	var bioRequirements = require("biology-requirements");
+	var busRequirements = require("business-requirements");
+	var matCSRequirements = require("mat-cs-requirements");
+	var comRequirements = require("com-requirements");
+
+	namespace.exports = {
+		bio:               bioRequirements.bio,
+		//bus-mgmt:          busRequriements.bus-mgmt,
+		//com-nm:            comRequirements.com-nm,
+		cis:               matCSRequirements.cis,
+		csc:               matCSRequirements.csc,
+		mat:               matCSRequirements.mat,
+		//mat-ed-adult:      matCSRequirements.mat-ed-adult
+		none:              {majorName: "N/A", majorCodeNumbers: [], relatedCodes: [], isBA: true}
+	};
+
+	namespace.exports["bus-mgmt"] =  busRequirements["bus-mgmt"];
+	namespace.exports["com-nm"] = comRequirements["com-nm"];
+	namespace.exports["mat-ed-adult"] = matCSRequirements["mat-ed-adult"];
+
+})(provide("major-requirements"));
+
+/*
 function getMajorRequirements(subjectCode)
 {
 	if(subjectCode.toLowerCase() == "bio")
@@ -27,3 +54,4 @@ function getMajorRequirements(subjectCode)
 			relatedCodes:[]
 		};
 }
+*/

@@ -1,5 +1,7 @@
-function getCOMNMMajorRequirements()
-{
+"use strict";
+
+(function(namespace) {
+
 	var majorName = "COM";
 	var electiveSelection = [900,211,213,222,225,229,230,233,234,237,240,242,248,252,254,255,
 	                  256,257,259,301,302,311,313,315,330,331,345,349,351,352,355,356,
@@ -8,9 +10,9 @@ function getCOMNMMajorRequirements()
 	                  [468],[488],[490],electiveSelection,electiveSelection,electiveSelection,electiveSelection];
 	var relatedCodes = [];
 
-	return {majorName: majorName,
+	namespace.exports["com-nm"] = {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,
 		    relatedCodes: relatedCodes,
 		    isBA: true
 	};
-}
+})(provide("com-requirements"));

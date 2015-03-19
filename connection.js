@@ -61,6 +61,23 @@
 		});*/
 	}
 
+	Collection.prototype.findOne = function(criteriaFunction, projectionFunction) {
+		criteriaFunction = criteriaFunction ? criteriaFunction : function(documentItem) { return true; };
+		projectionFunction = projectionFunction ? projectionFunction : function(field) { return true; };
+		var documentMatchingCriteria = null;
+
+		this._documents.some(function(documentItem) {
+			if(criteriaFunction(documentItem)) {
+				documentMatchingCriteria = documentItem;
+				return true;
+			}
+
+			return false;
+		});
+
+		return documentMatchingCriteria;
+	}
+
 	var Database = function(name) {
 		this._name = name;
 		this._collectionsByName = {};
@@ -128,6 +145,10 @@
 
 	namespace.exports.Connection.prototype.find = function(collectionName, criteriaFunction, projectionFunction) {
 		return this._database.getCollectionByName(collectionName).find(criteriaFunction, projectionFunction);
+	};
+
+	namespace.exports.Connection.prototype.findOne = function(collectionName, criteriaFunction, projectionFunction) {
+		return this._database.getCollectionByName(collectionName).findOne(criteriaFunction, projectionFunction);
 	};
 
 	namespace.exports.Connection.prototype.logCollection = function(name) {

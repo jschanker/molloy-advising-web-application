@@ -139,6 +139,10 @@
 		database.insert(dbnames.COURSE_HISTORY_COLLECTION_NAME, transcript);
 	};
 
+	//function updateData(courseItems, database, collection, overwrite) {
+
+	//}
+
 	namespace.exports.enterData = function() {
 		var LASCourses = getLASCourses();
 		console.log(allCourses);
@@ -149,21 +153,33 @@
 		database.insert(dbnames.LAS_COURSE_COLLECTION_NAME, LASCourses);
 
 		coursesFromCourseData.forEach(function(courseObj) {
+			if(courseObj._info.prerequisites) {
+				courseObj._info.prerequisites = courseObj._info.prerequisites.map(function(prerequisiteCourseCode) {
+					var commonCourse = database.findOne(dbnames.ALL_COURSES_COLLECTION_NAME, function(courseItem) {
+						return courseItem.makeCourseCode() == prerequisiteCourseCode;
+					});
+					//return commonCourse ? commonCourse : new records.Course(prerequisiteCourseCode.split("  ")[0], prerequisiteCourseCode.split("  ")[1], {prerequisites:[], offered:15});
+					return commonCourse ? commonCourse : records.Course.COURSE_DEFAULT;
+				});
+			}
+
 			var courseItem = new records.Course(courseObj._areaCode, courseObj._number, courseObj._info);
-			var commonCourses = database.find(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
-			if(commonCourses.length > 0) {
-				commonCourses[0].addInfo(courseObj._info, true);
+			var commonCourse = database.findOne(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
+			//if(commonCourses.length > 0) {
+			if(commonCourse) {
+				//commonCourses[0].addInfo(courseObj._info, true);
+				commonCourse.addInfo(courseObj._info, true);
 			} else {
 				courseItem.addInfo({isLAS: false}, false);
 				database.insert(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem);
 			}
 		});
 
-		futureCourses.forEach(function(courseObj) {
+		futureCourses.forEach(function(courseObj) { // Next semester's offerings: TODO: This information should be separate (bad database design)
 			var courseItem = new records.Course(courseObj.area, courseObj.number, courseObj);
-			var commonCourses = database.find(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
-			if(commonCourses.length > 0) {
-				commonCourses[0].addInfo(courseObj, false);
+			var commonCourse = database.findOne(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
+			if(commonCourse) {
+				commonCourse.addInfo(courseObj, false);
 			} else {
 				courseItem.addInfo({isLAS: false}, false);
 				database.insert(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem);
@@ -179,6 +195,9 @@
 		//console.log(JSON.stringify(getAllCourses()));
 
 		console.log(database.find(dbnames.LAS_COURSE_COLLECTION_NAME, function(course) {return course._areaCode == "MAT"},
+			function(field) { return field == "_areaCode" || field == "_number" || field == "_info"}));
+
+		console.log(database.findOne(dbnames.LAS_COURSE_COLLECTION_NAME, function(course) {return course._areaCode == "MAT" && course._number == "460"},
 			function(field) { return field == "_areaCode" || field == "_number" || field == "_info"}));
 	};
 
