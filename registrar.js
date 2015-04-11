@@ -25,7 +25,7 @@
 	var dbnames = require("dbnames");
 	var records = require("records");
 	var las = require("las");
-	var allCourses = require("course-data");
+	var allCourses = require("major-course-data");
 	var nextSemesterCourses = require("next-semester-courses");
 
 	var getLASCourses = function() {
@@ -42,9 +42,10 @@
 
 	};
 
-/*
+/**/
 	var getAllCourses = function() {
 		// hack: fix course-data
+		// THIS FUNCTION WILL NOT BE NEEDED IN THE FUTURE: It returns course list of every possible course
 		var ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 		var database = new db.Connection(dbnames.ALL_COURSES_DB_NAME);
 		var courseList = [];
@@ -56,12 +57,12 @@
 						var courseAreaCode = ALPHABET[firstLetterIndex] + ALPHABET[secondLetterIndex] + 
 						   ALPHABET[thirdLetterIndex];
 						var courseInfo = allCourses.getCourseWithCode(courseAreaCode, number);
-						//var courseItem = new records.Course(courseAreaCode, number, courseInfo);
+						var courseItem = new records.Course(courseAreaCode, number, courseInfo);
 						if(courseInfo != allCourses.NA_COURSE) {
 							courseList.push(new records.Course(courseAreaCode, number, courseInfo));
 						} 
-*/
-/*
+/**/
+/**/
 						if(courseInfo != allCourses.NA_COURSE) {
 							var commonCourses = database.find(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem.hasSameCodeAs.bind(courseItem));
 							//console.log("A: " + courseItem.hasSameCodeAs.bind(courseItem)(new records.Course("CIS", 103)));
@@ -74,8 +75,8 @@
 								database.insert(dbnames.ALL_COURSES_COLLECTION_NAME, courseItem);
 							}
 						}
-*/
-/*
+/**/
+/**/
 					}
 				}
 			}
@@ -83,7 +84,7 @@
 
 		return courseList;
 	}
-*/
+/**/
 
 	function getMatch(arr, regex)
 	{
@@ -144,9 +145,11 @@
 	//}
 
 	namespace.exports.enterData = function() {
+		//console.log(JSON.stringify(getAllCourses()));
 		var LASCourses = getLASCourses();
-		console.log(allCourses);
+		//console.log(allCourses);
 		var coursesFromCourseData = JSON.parse(allCourses);
+		//console.log("Here: " + coursesFromCourseData[0]._info);
 		var futureCourses = JSON.parse(nextSemesterCourses);
 
 		var database = new db.Connection(dbnames.LAS_COURSE_DB_NAME);
