@@ -612,6 +612,13 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:3,
 					offered:2
 				};
+			case 337:
+				return {
+					title: "Web/Mobile Game Development",
+					prerequisites:["CSC  120", "CSC  335"],
+					credits:3,
+					offered:1
+				};
 			case 340:
 				return {
 					title: "Computer Architecture and Design",

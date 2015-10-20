@@ -258,6 +258,7 @@ function getLASCodes()
 	"\nCSC  333,COBOL I,CIS333"+
 	"\nCSC  334,COBOL II,CIS334"+
 	"\nCSC  335,Programming Languages,CSC335"+
+	"\nCSC  337,Web/Mobile Game Development,CSC337"+
 	"\nCSC  369,IntroductionArtificial Intelligence,CSC369"+
 	"\nCSC  390,Topics in Computer Science,CSC390"+
 	"\nCSC  ELEC,Computer Science Elective,CSCELEC"+
