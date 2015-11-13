@@ -19,6 +19,6 @@ function getSWKMajorRequirements()
 	return {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,
 		    relatedCodes: relatedCodes,
-		    isBA: true
+		    isBA: false
 	};
 }
