@@ -10,10 +10,11 @@ function getSWKMajorRequirements()
 	                     "SPA  351", "SPA  352", "SPA  353", "SPA  370", "SPA  381", "SPA  390",
 	                     "SPA  409", "SPA  421", "SPA  424", "SPA  425", "SPA  427", "SPA  429", 
 	                     "SPA  461", "SPA  462", "SPA  470", "SPA  491", "ASL  101", "ASL  102"];
+	var relatedElectiveSelection2 = relatedElectiveSelection.slice(1);
 	var majorCodeNumbers = [[240],[241],[250],[342],[343],[344],[351],[360],
 	                  [452],[453],[460],[461],[464],[465],electiveSelection];
 	var relatedCodes = [["BIO  110"], ["MAT  115"], ["PSY  111"], ["PSY  326"], ["SOC  101"],
-	                    relatedElectiveSelection, relatedElectiveSelection];
+	                    relatedElectiveSelection, relatedElectiveSelection2];
 
 	return {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,

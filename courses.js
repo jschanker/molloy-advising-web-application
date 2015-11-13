@@ -965,7 +965,7 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 111:
 				return {
 					title: "General Psychology",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
@@ -993,7 +993,7 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 101:
 				return {
 					title: "Introductory Sociology",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
@@ -1007,14 +1007,14 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 101:
 				return {
 					title: "Beginning Spanish I",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
 			case 102:
 				return {
 					title: "Beginning Spanish II",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
@@ -1028,7 +1028,7 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 240:
 				return {
 					title: "Introduction to the Profession of Social Work",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:1,
 					offered:15
 				};
@@ -1043,21 +1043,21 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 250:
 				return {
 					title: "Diversity: Oppression, Privilege and Social Justice",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
 			case 325:
 				return {
 					title: "Social Work and Children with Special Needs",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:1,
 					offered:15
 				};
 			case 327:
 				return {
 					title: "Information Technology in Social Work",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:1,
 					offered:15
 				};
@@ -1071,7 +1071,7 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 343:
 				return {
 					title: "Human Behavior In the Social Environment I",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:10
 				};
@@ -1085,21 +1085,21 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 347:
 				return {
 					title: "Spirtuality and Professional Practice In the Helping Professions",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
 			case 348:
 				return {
 					title: "Working with Victims of Rape, Incest and Sexual Assault",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:1,
 					offered:5
 				};
 			case 350:
 				return {
 					title: "Professional Encounter: WHen the Person Meets the Profession",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:4,
 					offered:15
 				};	
@@ -1113,21 +1113,21 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 352:
 				return {
 					title: "HIV and AIDS",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:1,
 					offered:15
 				};
 			case 353:
 				return {
 					title: "Substance Abuse",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
 			case 360:
 				return {
 					title: "Social Work Practice In Research",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
@@ -1169,14 +1169,14 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 			case 465:
 				return {
 					title: "Capstone Course II",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:2,
 					offered:15
 				}; // corequisites: SWK 453 and SWK 461
 			case 900:
 				return {
 					title: "SWK Elective: 325, 327, 347, 348, 350, 352, or 353",
-					prerequisites:[""],
+					prerequisites:[],
 					credits:3,
 					offered:15
 				};
