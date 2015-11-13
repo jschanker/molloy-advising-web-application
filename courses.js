@@ -979,6 +979,189 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 		}
 	}
 
+	if(courseAreaCode == "SPA")
+	{
+		switch(codeNumber)
+		{
+			case 101:
+				return {
+					title: "Beginning Spanish I",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+			case 102:
+				return {
+					title: "Beginning Spanish II",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+		}
+	}
+
+	if(courseAreaCode == "SWK")
+	{
+		switch(codeNumber)
+		{
+			case 240:
+				return {
+					title: "Introduction to the Profession of Social Work",
+					prerequisites:[""],
+					credits:1,
+					offered:15
+				};
+			case 241:
+				return {
+					title: "Issues in Social Welfare I: History and Ideology",
+					prerequisites:["SOC  101"],
+					credits:3,
+					offered:10
+				}; // or consent of Chairperson
+
+			case 250:
+				return {
+					title: "Diversity: Oppression, Privilege and Social Justice",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+			case 325:
+				return {
+					title: "Social Work and Children with Special Needs",
+					prerequisites:[""],
+					credits:1,
+					offered:15
+				};
+			case 327:
+				return {
+					title: "Information Technology in Social Work",
+					prerequisites:[""],
+					credits:1,
+					offered:15
+				};
+			case 342:
+				return {
+					title: "Issues in Social Welfare II: Analysis and Advocacy for Social Policy",
+					prerequisites:["SWK  241"],
+					credits:3,
+					offered:5
+				};
+			case 343:
+				return {
+					title: "Human Behavior In the Social Environment I",
+					prerequisites:[""],
+					credits:3,
+					offered:10
+				};
+			case 344:
+				return {
+					title: "Human Behavior In the Social Environment II",
+					prerequisites:["SWK  343"],
+					credits:3,
+					offered:5
+				};
+			case 347:
+				return {
+					title: "Spirtuality and Professional Practice In the Helping Professions",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+			case 348:
+				return {
+					title: "Working with Victims of Rape, Incest and Sexual Assault",
+					prerequisites:[""],
+					credits:1,
+					offered:5
+				};
+			case 350:
+				return {
+					title: "Professional Encounter: WHen the Person Meets the Profession",
+					prerequisites:[""],
+					credits:4,
+					offered:15
+				};	
+			case 351:
+				return {
+					title: "Generalist Social Work Practice I",
+					prerequisites:["SWK  343"],
+					credits:3,
+					offered:5
+				};  // Corequisite: SWK 344
+			case 352:
+				return {
+					title: "HIV and AIDS",
+					prerequisites:[""],
+					credits:1,
+					offered:15
+				};
+			case 353:
+				return {
+					title: "Substance Abuse",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+			case 360:
+				return {
+					title: "Social Work Practice In Research",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+			case 452:
+				return {
+					title: "Generalist Social Work Practice II",
+					prerequisites:["SWK  351"],
+					credits:3,
+					offered:10
+				}; // concurrent field practice
+			case 453:
+				return {
+					title: "Generalist Social Work Practice III",
+					prerequisites:["SWK  452"],
+					credits:3,
+					offered:5
+				}; // concurrent field practice
+			case 460:
+				return {
+					title: "Field Instruction in Social Work I",
+					prerequisites:["SWK  351"],
+					credits:6,
+					offered:15
+				}; // corequisite SWK 452, SWK 464 and SWK 465
+			case 461:
+				return {
+					title: "Field Instruction in Social Work II",
+					prerequisites:["SWK  460"],
+					credits:6,
+					offered:5
+				}; // corequisite SWK 453, SWK 465
+			case 464:
+				return {
+					title: "Capstone Course I",
+					prerequisites:["MAT  115", "SWK  360"],
+					credits:2,
+					offered:15
+				}; // corequisites: SWK 452 and SWK 460
+			case 465:
+				return {
+					title: "Capstone Course II",
+					prerequisites:[""],
+					credits:2,
+					offered:15
+				}; // corequisites: SWK 453 and SWK 461
+			case 900:
+				return {
+					title: "SWK Elective: 325, 327, 347, 348, 350, 352, or 353",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
+		}
+	}
+
 	return {
 		title:"Course Not Found",
 		prerequisites:[],

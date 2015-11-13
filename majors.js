@@ -17,8 +17,12 @@ function getMajorRequirements(subjectCode)
 
 	else if(subjectCode.toLowerCase() == "mat")
 		return getMATMajorRequirements();
+
 	else if(subjectCode.toLowerCase() == "mat-ed-adult")
 		return getMATAdEdMajorRequirements();
+	
+	else if(subjectCode.toLowerCase() == "swk")
+		return getSWKMajorRequirements();
 
 	else 
 		return {
