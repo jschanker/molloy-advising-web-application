@@ -1,7 +1,8 @@
 function getSWKMajorRequirements()
 {
 	var majorName = "SWK";
-	var electiveSelection = [900,325,327,347,348,350,352,353]; // Add 200- or 300- Level GRN courses
+	//var electiveSelection = [900,325,327,347,348,350,352,353]; // Add 200- or 300- Level GRN courses
+	var electiveSelection = [900,347,350,353]; // Add 200- or 300- Level GRN courses
 	var relatedElectiveSelection = ["SPA  101", "SPA  102", "SPA  103", "SPA  104", "SPA  105", "SPA  106",
 	                     "SPA  201", "SPA  209", "SPA  215", "SPA  216", "SPA  220", "SPA  224",
 	                     "SPA  250", "SPA  305", "SPA  307", "SPA  312", "SPA  313", "SPA  314",

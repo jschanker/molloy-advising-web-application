@@ -976,6 +976,27 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					credits:3,
 					offered:15
 				}; // PSY 111 prerequisite but not used
+			case 326:
+				return {
+					title: "Abnormal Psychology",
+					prerequisites:["PSY  111"],
+					credits:3,
+					offered:5
+				}; // PSY 204 or 205 prereq possible as well, chairperson approval also possible
+		}
+	}
+
+	if(courseAreaCode == "SOC")
+	{
+		switch(codeNumber)
+		{
+			case 101:
+				return {
+					title: "Introductory Sociology",
+					prerequisites:[""],
+					credits:3,
+					offered:15
+				};
 		}
 	}
 
