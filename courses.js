@@ -568,21 +568,21 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					title: "Programming I",
 					prerequisites:[],
 					credits:3,
-					offered:0
+					offered:10
 				};
 			case 121:
 				return {
 					title: "Programming II",
 					prerequisites:["CSC  120"],
 					credits:3,
-					offered:0
+					offered:5
 				};
 			case 217:
 				return {
 					title: "Computer Forensics",
 					prerequisites:[],
 					credits:3,
-					offered:2
+					offered:8
 				};
 			case 224:
 				return {
