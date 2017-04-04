@@ -20,10 +20,101 @@
 		<script src = "courses.js"></script>
 		<script src = "biology-advice.js"></script>
 		<script src = "business-advice.js"></script>
+		<script src = "com-advice.js"></script>
 		<script src = "math-advice.js"></script>
+		<script src = "swk-advice.js"></script>
 		<script src = "majors.js"></script>
 		<script src = "input-processor.js"></script>
+		<script src = "spring16-course-data.js"></script>
+		<script src = "jquery/1.11.1/jquery.min.js"></script>
 		<script>
+		"use strict";
+
+			$(document).ready(function() {
+				$("h1").slideToggle().slideToggle();
+				$("#toggle-course-history").click(function() {
+					//alert($("#course-history-box").val());
+					$("#course-history-box-container").slideToggle("slow");
+					if($(this).text().indexOf("-") == "-1") {
+						$(this).text("-");
+					} else {
+						$(this).text("+");
+					}
+				});
+				generateReport();
+				$("#addHeader").click(addCourseRow);
+				$("#addHeader").click(generateReport);
+
+				addCourseRow();
+
+				var properties = ["area", "number", "section", "title", "days", "start", "end", "credits", "prof", "warnings", "remove"];
+
+				$("#first-major-select").change(function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+					generateReport();
+				});
+				$("#second-major-select").change(function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+					generateReport();
+				});
+				$("#minor-select").change(function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+					generateReport();
+				});
+				$("#course-history-box").on('keyup paste', function() {
+					$('#course-table').find('tr').each(function() {
+						//alert( getRowIdFromPrefixStr( row.attr('id')  ) );
+						if($(this).attr('id')) {
+							updateCourseRow( properties, getRowIdFromPrefixStr($(this).attr('id')) );
+						}
+					});
+					generateReport();
+				});
+
+				$("#graduation-select").change(function() {
+					generateReport();
+				});
+			});
+
+			function packagePlannedCourseItems() {
+				var plannedCourseItems = [];
+				$('#course-table').find('tr').each(function() {
+					if($(this).attr('id')) {
+						var courseRowIdPrefixStr = $(this).attr('id');
+						var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+						var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+						var selectedCourseSection = $("#" + courseRowIdPrefixStr + "-sectionSelect").val();
+						var courseItem = getCourseByAreaNumSection(selectedCourseArea, selectedCourseNumber, selectedCourseSection);
+						if( courseItem ) {
+							plannedCourseItems.push({
+								courseAreaCode:  selectedCourseArea,
+								courseNumber:    selectedCourseNumber,
+								countsForCredit: courseItem.credits > 0,
+								credits:         courseItem.credits,
+								grade:           "WIP"
+							});
+						}
+					}
+				});
+
+				return plannedCourseItems;
+			}
+
 			function generateReport()
 			{
 				/*var courseHistory = document.getElementById('course-history-box').value;
@@ -37,21 +128,23 @@
 					semestersToGraduate:document.getElementById('graduation-select').value,
 					firstMajor:document.getElementById('first-major-select').value,
 					secondMajor:document.getElementById('second-major-select').value,
-					minor:document.getElementById('minor-select').value
+					minor:document.getElementById('minor-select').value,
+					plannedCourseItems: packagePlannedCourseItems()
 				};
 
 				var responseItems = generateAdvice(courseInput);
 				//var responseItems = parseCourseHistory(courseHistory);
 				var responseHTML = "<ol>\n";
-				for(var i = 0; i < responseItems.length;i++)
-				{
-					var responseItem = responseItems[i];
+
+				responseItems.forEach(function(responseItem) {
 					if(responseItem)
 						responseHTML += "\t<li>" + responseItem.split("\n").join("<BR>\n") + "</li>\n"; 
 						// Nice way to replace all (http://stackoverflow.com/questions/1144783/replacing-all-occurrences-of-a-string-in-javascript)
-				}
+				});
+
 				responseHTML += "</ol>";
-				document.getElementById('suggestion-box').innerHTML = responseHTML;
+				//document.getElementById('suggestion-box').innerHTML = responseHTML;
+				$('#suggestion-box').html(responseHTML);
 				//alert(responseHTML);
 				//parseCourseHistory(document.getElementById('course-history-box').value);
 			}
@@ -59,6 +152,380 @@
 			{
 				document.getElementById("mainForm").style.color = textColor;
 				document.getElementById("mainForm").style.backgroundColor = bgColor;
+			}
+			function removeDuplicateMajor()
+			{
+				if(document.getElementById("first-major-select").value == document.getElementById("second-major-select").value) {
+					document.getElementById("second-major-select").options[0].selected = 'selected';
+				}
+			}
+
+			var getCourseListByArea = (function(){
+				var courses = JSON.parse(getCurrentCourses());
+				var coursesByArea = {};
+				
+				courses.forEach(function(course) {
+					if(!(course.area in coursesByArea)) {
+						coursesByArea[course.area] = [course];
+					} else {
+						coursesByArea[course.area].push(course);
+					}
+				});
+
+				return function() {
+					return coursesByArea;
+				}
+
+			})();
+
+			var courseCount = (function() {
+				var count = 0;
+
+				return function(delta) {
+					if(delta) {
+						if(0 < count + delta)
+							count += delta;
+					}
+					return count;
+				}
+			})();
+
+			var getRowUID = (function() {
+				var id = 0;
+
+				return function() {
+					id++;
+					return id;
+				}
+			})();
+
+			function addPlusButton() {
+				var addButton = document.createElement("button");
+				addButton.setAttribute("value", "+");
+
+				return addButton;
+			}
+
+			function removeCourseRow(num)
+			{
+				var courseRowId = "#course-row-" + num;
+				$(courseRowId).remove();
+				courseCount(-1);
+				generateReport();
+			}
+
+			function getCourseByAreaNumSection(area, number, section) {
+				var courseList = getCourseListByArea()[area].filter(function(course) {
+					return course.number == number && course.section == section;
+				});
+
+				return courseList.length > 0 ? courseList[0] : undefined; 
+			}
+
+			function partitionAreaSectionsByNumber(area) {
+				var areaCourses = getCourseListByArea()[area];
+				var partitionedArea = {};
+				areaCourses.forEach(function(course) {
+					var number = course.number;
+					if(number in partitionedArea) {
+						partitionedArea[number].push(course);
+					} else {
+						partitionedArea[number] = [course];
+					}
+				});
+
+				//alert(partitionedArea.pop()[0].number);
+
+				return partitionedArea;
+			}
+
+			function getSectionsByAreaAndNumber(area, number) {
+				return getCourseListByArea()[area].filter(function(course) {
+					return course.number == number;
+				}).map(function(course) {
+					return course.section;
+				});
+			}
+
+			function createNewDOMElement(type, id, className) {
+				var element = document.createElement(type);
+
+				if(className) {
+					element.setAttribute("class", className);
+				}
+				if(id) {
+					element.setAttribute("id", id);
+				}
+
+				return element;
+			}
+
+			function addNewOption(selectId, value, text) {
+				var jQueryElement = $("#" + selectId);
+				var optionElement = document.createElement("OPTION");
+				optionElement.setAttribute("value", value);
+				if(!text) {
+					text = value;
+				}
+				optionElement.text = text;
+				jQueryElement.append(optionElement);
+			}
+
+			function getRowIdPrefixStr(rowId) {
+				return "course-row-" + rowId;
+			}
+
+			function getRowIdFromPrefixStr(rowIdPrefixStr) {
+				return rowIdPrefixStr.substring(rowIdPrefixStr.lastIndexOf("-")+1);
+			}
+
+			function updateCourseRow(properties, rowId, updateCourseNumbers, updateSectionNumbers) {
+				var courseRowIdPrefixStr = getRowIdPrefixStr(rowId);
+				var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+
+				var numberSelectMenu = $("#" + courseRowIdPrefixStr + "-numberSelect");
+				var sectionSelectMenu = $("#" + courseRowIdPrefixStr + "-sectionSelect");
+
+				var coursesByNumber = partitionAreaSectionsByNumber(selectedCourseArea);
+
+				if(updateCourseNumbers) {
+					//var sortedCourseNumbers = courseByNumber.map()
+					var sortedCoursesByNumber = Object.getOwnPropertyNames(coursesByNumber).sort();
+
+					numberSelectMenu.empty();
+
+					sortedCoursesByNumber.forEach(function(courseNumber) {
+						addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+					});
+
+					/*
+					for(var courseNumber in coursesByNumber) {
+						addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+					}
+					*/
+				}
+
+				var selectedCourseNumber = numberSelectMenu.val();
+
+				if(updateCourseNumbers || updateSectionNumbers) {
+					sectionSelectMenu.empty();
+
+					coursesByNumber[selectedCourseNumber].forEach(function(course) {
+						addNewOption(courseRowIdPrefixStr + "-sectionSelect", course.section);
+					});
+				}
+
+				var selectedCourse = getCourseByAreaNumSection(selectedCourseArea, selectedCourseNumber, sectionSelectMenu.val());
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[3]).text(selectedCourse.title);
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[4]).empty();
+				$("#" + courseRowIdPrefixStr + "-" + properties[5]).empty();
+				$("#" + courseRowIdPrefixStr + "-" + properties[6]).empty();
+
+				if(selectedCourse.days) {
+					for(var i = 0; i < selectedCourse.days.length; i++) {
+						$("#" + courseRowIdPrefixStr + "-" + properties[4]).append("<span class = 'text-nowrap'>" + selectedCourse.days[i] + "</span><br>\n");
+						$("#" + courseRowIdPrefixStr + "-" + properties[5]).append("<span class = 'text-nowrap'>" + selectedCourse.startTimes[i] + "</span><br>\n");
+						$("#" + courseRowIdPrefixStr + "-" + properties[6]).append("<span class = 'text-nowrap'>" + selectedCourse.endTimes[i] +"</span><br>\n");
+					}
+				}
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[7]).text(selectedCourse.credits);
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[8]).empty();
+				selectedCourse.professors.forEach(function(professor) {
+					$("#" + courseRowIdPrefixStr + "-" + properties[8]).append(professor + "<br>\n");
+				});
+
+				var courseInput = {
+					courseHistory:document.getElementById('course-history-box').value,
+					semestersToGraduate:document.getElementById('graduation-select').value,
+					firstMajor:document.getElementById('first-major-select').value,
+					secondMajor:document.getElementById('second-major-select').value,
+					minor:document.getElementById('minor-select').value,
+					selectedCourse:selectedCourse
+				};
+
+				$("#" + courseRowIdPrefixStr + "-" + properties[9]).empty();
+				getCourseWarnings(courseInput).forEach(function(warningCode) {
+					$("#" + courseRowIdPrefixStr + "-" + properties[9]).append("<strong class = 'text-warning text-uppercase'>" + warningCode + "</strong><br>\n");
+				});
+			}
+
+			function addCourseRow()
+			{
+				var properties = ["area", "number", "section", "title", "days", "start", "end", "credits", "prof", "warnings", "remove"];
+				var coursesByArea = getCourseListByArea();
+				var rowId = getRowUID();
+				var courseRowIdPrefixStr = getRowIdPrefixStr(rowId);
+				var tableRow = createNewDOMElement("tr",courseRowIdPrefixStr);
+
+				var areaSelect = createNewDOMElement("select", courseRowIdPrefixStr + "-areaSelect", "form-control");
+				var numberSelect = createNewDOMElement("select", courseRowIdPrefixStr + "-numberSelect", "form-control");
+				var sectionSelect = createNewDOMElement("select", courseRowIdPrefixStr + "-sectionSelect", "form-control");
+
+				var start = document.createElement("span");
+				var end = document.createElement("span");
+				var credits = document.createElement("span");
+				var professor = document.createElement("span");
+				var removeSpan = createNewDOMElement("span", courseRowIdPrefixStr + "-removeSpan", "toggle");
+				//var removeButton = document.createElement("span");
+
+				$("#course-table").append(tableRow);
+
+				properties.forEach(function(property) {
+					var td = createNewDOMElement("td", courseRowIdPrefixStr + "-" + property);
+					$("#" + courseRowIdPrefixStr).append(td);
+				});
+
+				var areaCellId = "#" + courseRowIdPrefixStr + "-" + properties[0];
+				$(areaCellId).append(areaSelect);
+				var numberCellId = "#" + courseRowIdPrefixStr + "-" + properties[1];
+				$(numberCellId).append(numberSelect);
+				var sectionCellId = "#" + courseRowIdPrefixStr + "-" + properties[2];
+				$(sectionCellId).append(sectionSelect);
+				
+				for(var area in coursesByArea) {
+					addNewOption(courseRowIdPrefixStr + "-areaSelect", area);
+				}
+
+				updateCourseRow(properties, rowId, true);
+				
+
+
+				//var selectedCourseArea = $("#" + courseRowIdPrefixStr + "-areaSelect").val();
+
+				//var numberCellId = "#" + courseRowIdPrefixStr + "-" + properties[1];
+				//$(numberCellId).append(numberSelect);
+				$("#" + courseRowIdPrefixStr + "-areaSelect").change(function() {
+					updateCourseRow(properties, rowId, true);
+					generateReport();
+					/*
+					selectedCourseArea = $(this).val();
+					$("#" + courseRowIdPrefixStr + "-numberSelect").empty();
+					var courseNumbers = [];
+					//alert(selectedCourseArea)
+
+					for(var course in coursesByArea[selectedCourseArea]) {
+						var courseNumber = coursesByArea[selectedCourseArea][course].number;
+						var section = coursesByArea[selectedCourseArea][course].section;
+						if(courseNumbers.indexOf(courseNumber) == -1) {
+							console.log(courseNumbers);
+							addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+							courseNumbers.push(courseNumber);
+						}
+					}
+
+					var sectionSelectObj = $("#" + courseRowIdPrefixStr + "-sectionSelect");
+					var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+					sectionSelectObj.empty();
+
+					var sections = getSectionsByAreaAndNumber(selectedCourseArea, selectedCourseNumber);
+
+					sections.forEach(function(section) {
+						addNewOption(courseRowIdPrefixStr + "-sectionSelect", section);
+					});
+
+					var selectedCourse = getCourseByAreaNumSection(selectedCourseArea, selectedCourseNumber, sectionSelectObj.val());
+
+					$("#" + courseRowIdPrefixStr + "-" + properties[6]).text(selectedCourse.credits);
+					$("#" + courseRowIdPrefixStr + "-" + properties[7]).empty();
+					selectedCourse.professors.forEach(function(professor) {
+						$("#" + courseRowIdPrefixStr + "-" + properties[7]).append(professor + "<br>");
+					});
+					//$("#" + courseRowIdPrefixStr + "-" + properties[7]).text(selectedCourse.professors);
+					//var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+					//var sectionSelectObj = $("#" + courseRowIdPrefixStr + "-sectionSelect");
+					//sectionSelectObj.empty();
+					*/
+				});
+
+/*
+				for(var course in coursesByArea[selectedCourseArea]) {
+					var courseNumber = coursesByArea[selectedCourseArea][course].number;
+					addNewOption(courseRowIdPrefixStr + "-numberSelect", courseNumber);
+				}
+
+				var selectedCourseNumber = $("#" + courseRowIdPrefixStr + "-numberSelect").val();
+*/
+				$("#" + courseRowIdPrefixStr + "-numberSelect").change(function() {
+					updateCourseRow(properties, rowId, false, true);
+					generateReport();
+				});
+
+/*
+				var sectionCellId = "#" + courseRowIdPrefixStr + "-" + properties[2];
+				$(sectionCellId).append(sectionSelect);
+
+				for(var course in coursesByArea[selectedCourseArea]) {
+					var courseNumber = coursesByArea[selectedCourseArea][course].number;
+					if(courseNumber == selectedCourseNumber) {
+						var section = coursesByArea[selectedCourseArea][course].section;
+						addNewOption(courseRowIdPrefixStr + "-sectionSelect", section);
+					}
+				}
+*/
+				$("#" + courseRowIdPrefixStr + "-sectionSelect").change(function() {
+					updateCourseRow(properties, rowId);
+					generateReport();
+				});
+
+				var removeCellId = "#" + courseRowIdPrefixStr + "-" + properties[10];
+				$(removeCellId).append(removeSpan);
+				$("#" + courseRowIdPrefixStr + "-removeSpan").text("-");
+				$("#" + courseRowIdPrefixStr + "-removeSpan").click(removeCourseRow.bind(undefined, rowId));
+
+				console.log($("#course-table").html());
+
+				courseCount(1); // increase course count by 1
+
+			}
+
+			function addCourseSelections()
+			{
+				var courses = JSON.parse(getCurrentCourses());
+				var coursesByArea = {};
+
+				courses.forEach(function(course) {
+					if(!(course.area in coursesByArea)) {
+						coursesByArea[course.area] = [course];
+					} else {
+						coursesByArea[course.area].push(course);
+					}
+				});
+
+				for(var area in coursesByArea) {
+					var courseArea = document.createElement("OPTION");
+					courseArea.setAttribute("value", area);
+					courseArea.text = area;
+					document.getElementById("area-1").add(courseArea);
+				}
+
+				return coursesByArea;
+			}
+			function addCourseNumbers()
+			{
+				var courseArea = document.getElementById("area-1");
+				var area = courseArea.options[courseArea.selectedIndex].value;
+				//$("#area-1").empty();
+				$("#number-1").empty();
+				var coursesByArea = addCourseSelections();
+				//$("area-1").options[$("area-1")]
+				/*for(var opt in document.getElementById("number-1").options) {
+					document.getElementById("number-1").remove(0);
+				}*/
+
+				//var courseArea = $("area-1");//document.getElementById("area-1");
+				//var courseArea = document.getElementById("area-1");
+				//var area = courseArea.options[courseArea.selectedIndex].value;
+//alert(area);
+				for(var course in coursesByArea[area]) {
+					var courseNumber = document.createElement("OPTION");
+					courseNumber.setAttribute("value", coursesByArea[area][course].number);
+					courseNumber.text = coursesByArea[area][course].number;
+					document.getElementById("number-1").add(courseNumber);
+				}
 			}
 		</script>
 	</head>
@@ -86,32 +553,47 @@
 			</div>
 			<form role = "form" id = "mainForm">
 				<div class = "row">
-					<div class = "col-md-6">
+					<div class = "col-md-4">
 						<div class = "form-group">
 							<label for = "first-major-select">
 								First Major:
 							</label>
-							<select name = "first-major" id = "first-major-select" class="form-control">
-								<!--<option value = "csc">B.A. Computer Science</option>-->
+							<select name = "first-major" id = "first-major-select" class="form-control" onChange = "removeDuplicateMajor()">
+								<option value = "none" SELECTED>Undeclared</option>
 								<option value = "bio">B.S. Biology (Core only - in progress)</option>
 								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
+								<option value = "com-nm">B.A. Communications: New Media</option>
+								<option value = "csc">B.A. Computer Science</option>
+								<option value = "cis">B.S. Computer Information Systems</option>
 								<option value = "mat">B.A. Mathematics</option>
 								<option value = "mat-ed-adult">B.A. Mathematics - Adolescence Education (in progress - math only)</option>
-								<!--<option value = "cis">B.S. Computer Information Systems</option>-->
+								<option value = "swk">B.S.W. Social Work</option>
 							</select>
 						</div>
+					</div>
+					<div class = "col-md-4">
 						<div class = "form-group">
 							<label for = "second-major-select">
 								Second Major:
 							</label>
-							<select name = "second-major" id = "second-major-select" class = "form-control">
+							<select name = "second-major" id = "second-major-select" class = "form-control" onChange = "removeDuplicateMajor()">
 								<!--<option value = "csc">B.A. Computer Science</option>
 								<option value = "mat">B.A. Mathematics</option>
 								<option value = "cis">B.S. Computer Information Systems</option>-->
 								<option value = "none" SELECTED>None</option>
+								<option value = "bio">B.S. Biology (Core only - in progress)</option>
+								<option value = "bus-mgmt">B.S. Business Management (in progress)</option>
+								<option value = "com-nm">B.A. Communications: New Media</option>
+								<option value = "csc">B.A. Computer Science</option>
+								<option value = "cis">B.S. Computer Information Systems</option>
+								<option value = "mat">B.A. Mathematics</option>
+								<option value = "mat-ed-adult">B.A. Mathematics - Adolescence Education (in progress - math only)</option>
+								<option value = "swk">B.S.W. Social Work</option>
 								<!--<option value = "other">Other</option>-->
 							</select>
 						</div>
+					</div>
+					<div class = "col-md-4">
 						<div class = "form-group">
 							<label for = "minor-select">
 								Minor:
@@ -123,31 +605,177 @@
 							<option value = "none" SELECTED>None</option>
 							<!--<option value = "other">Other</option>-->
 							</select>
-						</div>									
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
 						<div class = "form-group">
 							<label for = "graduation-select">
 								Planned Graduation:
 							</label>
 							<select name = "graduation" id = "graduation-select" class = "form-control">
-								<option value = "1">Spring 2015 (Senior)</option>
-								<option value = "2">Fall 2015</option>
-								<option value = "3">Spring 2016 (Junior)</option>
-								<option value = "4">Fall 2016</option>
-								<option value = "5">Spring 2017 (Sophmore)</option>
-								<option value = "6">Fall 2017</option>
-								<option value = "7">Spring 2018 (Freshman)</option>
-								<option value = "8">Fall 2018</option>
-								<option value = "9">Spring 2019 (Freshman in 5-year)</option>
+								<option value = "1">Spring 2016 (Senior)</option>
+								<option value = "2">Fall 2017</option>
+								<option value = "3">Spring 2017 (Junior)</option>
+								<option value = "4">Fall 2017</option>
+								<option value = "5">Spring 2018 (Sophmore)</option>
+								<option value = "6">Fall 2018</option>
+								<option value = "7">Spring 2019 (Freshman)</option>
+								<option value = "8">Fall 2019</option>
+								<option value = "9">Spring 2020 (Freshman in 5-year)</option>
 							</select>
-						</div>									
-						<div class = "form-group">
-							<label for = "course-box">
-								Planned Courses:
-							</label>
-							<textarea DISABLED name = "courses" id = "course-box" class = "form-control">NOT YET IMPLEMENTED</textarea>
 						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
+						<p>
+							<label for = "course-history-box">
+								Course History
+							</label> 
+							(Select all (Ctrl+A) from Course History on Lions Den, Copy (Ctrl+C), and Paste (Ctrl+V) below):
+							<span id = "toggle-course-history" class = "toggle-border">-</span>
+						</p>
+						<div id = "course-history-box-container">
+							<textarea class = "form-control" name = "course-history" id = "course-history-box"></textarea>
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "form-group">
+						<div class = "col-md-12">
+							<label>Planned Courses:</label>
+							<!--<textarea DISABLED name = "courses" id = "course-box" class = "form-control">NOT YET IMPLEMENTED</textarea>-->
+							<table class = "table table-bordered" id = "course-table">
+								<thead>
+									<tr>
+										<th>AREA</th>
+										<th>NUMBER</th>
+										<th>SECTION</th>
+										<th>TITLE</th>
+										<th>DAYS</th>
+										<th>START</th>
+										<th>END</th>
+										<th>CREDITS</th>
+										<th>PROFESSORS</th>
+										<!--<th>GOOD CHOICE?</th>-->
+										<th>WARNINGS</th>
+										<th id = "addHeader" class = "toggle">+</th>
+									</tr>
+								</thead>
+								<tbody>
+									<!--<tr>
+										<td>
+											<select name = "area-1" id = "area-1" onChange = "addCourseNumbers()">
+												<option value = "None">AREA</option>
+											</select>
+										</td>
+										<td>
+											<select name = "number-1" id = "number-1">
+												<option value = "None">NUMBER</option>
+											</select>
+										</td>
+										<td>
+											<select name = "section-1">
+												<option value = "None">SECTION</option>
+											</select>
+										</td>
+										<td>
+											<span id = "start-time">
+												START
+											</span>
+										</td>
+										<td>
+											<span id = "end-time">
+												END
+											</span>
+										</td>
+										<td>
+											<span id = "credits">
+												CREDITS
+											</span>
+										</td>
+										<td>
+											<span id = "professor">
+												PROF
+											</span>
+										</td>
+									</tr>-->
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
+						<label for = "credit-summary">Required Credit Summary (Semester's courses included)</label>:<BR>
+						<div id = "credit-summary">
+							<table id = "credit-table">
+								<tr>
+									<td>
+										<label class = "subheading">Major/Minor and Related Requirements:</label>
+									</td>
+									<td class = "num">
+										<span id = "major-minor-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "major-minor-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Additional General Education:</label>
+									</td> 
+									<td class = "num">
+										<span id = "gen-ed-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "gen-ed-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Additional LAS (Assuming 90 for B.A., 60 for B.S.):</label>
+									</td>
+									<td class = "num">
+										<span id = "las-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "las-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Additional Credits To Meet 128:</label> 
+									</td>
+									<td class = "num">
+										<span id = "additional-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "additional-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<label class = "subheading">Total Credits Needed:</label>
+									</td>
+									<td class = "num">
+										<span id = "total-credits"><strong></strong></span>
+									</td>
+									<td>
+										<span id = "total-credits-warning"><strong></strong></span>
+									</td>
+								</tr>
+							</table>
+						</div>
+					</div>
+				</div>
+				<div class = "row">
+					<div class = "col-md-12">
 						<label for = "suggestion-box">
-							Suggestions/Warnings:
+							<!--Suggestions/Warnings:-->
+							Major/General Education Course Warnings:
 						</label>
 						<div id = "suggestion-box">
 							Information will appear here. 
@@ -163,17 +791,7 @@
 							Information will appear here.<BR>
 							Information will appear here.<BR>-->
 						</div>
-					</div>								
-					<div class = "col-md-6">
-						<p>
-							<label for = "course-history-box">
-								Course History
-							</label> 
-							(Select all (Ctrl+A) from Course History on Lions Den, Copy (Ctrl+C), and Paste (Ctrl+V) below):
-						</p>
-						<textarea class = "form-control" name = "course-history" id = "course-history-box"></textarea>
 					</div>
-				</div>
 				<div class = "row">
 					<div class = "form-group">
 						<div class = "col-md-6 col-md-offset-3" id = "submitButton">

@@ -12,6 +12,67 @@ form
 	border-radius:10px;
 }
 
+label
+{
+	/*border-bottom:1px solid white;*/
+}
+
+#course-table th, #course-table td
+{
+	padding: 5px;
+	text-align: center
+}
+
+.subheading 
+{
+	padding-left:0px;
+}
+
+#credit-summary
+{
+	background-color:#AAAAAA;
+	color:#000000;
+	padding:5px;
+	border-radius:5px;
+	/*margin-left:10px;*/
+	/*margin-right:10px;*/
+	width:100%;
+}
+
+#credit-table
+{
+	border: 1px solid black;
+	font-size:120%;
+}
+
+#credit-table td
+{
+	padding:0px 5px;
+	/*text-align: right;*/
+	vertical-align: top;
+	border: 1px solid black;
+}
+
+.num {
+	text-align:right;
+}
+
+.toggle-border
+{
+	border: 1px solid black;
+	padding: 5px 10px 5px 10px;
+	font-weight:bold;
+	font-size:large;
+}
+
+.toggle
+{
+	/*border: 1px solid black;*/
+	padding: 5px 10px 5px 10px;
+	font-weight:bold;
+	font-size:large;
+}
+
 form .row
 {
 	padding: 10px;

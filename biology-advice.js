@@ -7,6 +7,7 @@ function getBIOMajorRequirements()
 
 	return {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,
-		    relatedCodes: relatedCodes
+		    relatedCodes: relatedCodes,
+		    isBA: false
 	};
 }

@@ -258,6 +258,7 @@ function getLASCodes()
 	"\nCSC  333,COBOL I,CIS333"+
 	"\nCSC  334,COBOL II,CIS334"+
 	"\nCSC  335,Programming Languages,CSC335"+
+	"\nCSC  337,Web/Mobile Game Development,CSC337"+
 	"\nCSC  369,IntroductionArtificial Intelligence,CSC369"+
 	"\nCSC  390,Topics in Computer Science,CSC390"+
 	"\nCSC  ELEC,Computer Science Elective,CSCELEC"+
@@ -957,7 +958,50 @@ function getLASCodes()
 	"\nTHE  ELEC,Theology Elective,THEELEC"+
 	"\nTHE  ETHC,Theology/Ethics General Ed,THEETHC"+
 	"\nTHE  GNED,Theology General Ed,THEGNED"+
-	"\nTHE  MAJR,Theology Major,THEMAJR";
+	"\nTHE  MAJR,Theology Major,THEMAJR"+
+	"\nTRS  100,The Bible,THE100"+
+	"\nTRS  101,Major Religious Voices,THE101"+
+	"\nTRS  104,What Is Religion?,THE104"+
+	"\nTRS  220H,\"(H)Saints, Sinners and God\",THE220H"+
+	"\nTRS  221,The New Testament,THE221"+
+	"\nTRS  225,Topics: Theology & Religion,THE225"+
+	"\nTRS  227,The God Question,THE227"+
+	"\nTRS  230,Meaning of Jesus,THE230"+
+	"\nTRS  241,Religion & American Tradition,THE241"+
+	"\nTRS  242,Women and Christianity,THE242"+
+	"\nTRS  251,Religious Thought in  Low Countries,THE251"+
+	"\nTRS  252,Contemporary Catholicism,THE252"+
+	"\nTRS  254,Protestantism,THE254"+
+	"\nTRS  257,Black American Religious Experience,THE257"+
+	"\nTRS  260,Religions of the West,THE260"+
+	"\nTRS  262,Call to Holiness: Catholic Church,THE262"+
+	"\nTRS  263,Judaism,THE263"+
+	"\nTRS  265,Islam,THE265"+
+	"\nTRS  270,Buddhist Thought & Spirituality,*PHI270"+
+	"\nTRS  273,Church in History & Culture,THE273"+
+	"\nTRS  278,Ethics: Method and Issues,THE278"+
+	"\nTRS  279,Religion & Global Moral Issues,*ETH279"+
+	"\nTRS  281,Religions of the East,THE281"+
+	"\nTRS  282,Ethics and Criminal Justice,THE282"+
+	"\nTRS  285,Religious Themes in the Cinema,THE285"+
+	"\nTRS  288,Ethics and Health Care,ETH288"+
+	"\nTRS  300,Scriptural Issues,THE300"+
+	"\nTRS  320H,(H)Saints & Sinners:Relig/Spiritual,THE220H"+
+	"\nTRS  325,The God Question,THE227"+
+	"\nTRS  330,Meaning of Jesus,THE230"+
+	"\nTRS  340,Symbol and Celebration,THE340"+
+	"\nTRS  345,Love & Sexuality in Marriage,THE345"+
+	"\nTRS  350,\"God, Satan, and Fiction\",THE350"+
+	"\nTRS  355,Mysticism,THE355"+
+	"\nTRS  370,Theological Issues,THE370"+
+	"\nTRS  390,Topics in Theology,THE390"+
+	"\nTRS  470,Independent Study,THE470"+
+	"\nTRS  491,Seminar,THE491"+
+	"\nTRS  505,Advanced Medical Ethics,*ETH505"+
+	"\nTRS  ELEC,Theology Elective,THEELEC"+
+	"\nTRS  ETHC,Theology/Ethics General Ed,THEETHC"+
+	"\nTRS  GNED,Theology General Ed,THEGNED"+
+	"\nTRS  MAJR,Theology Major,THEMAJR";
 
 	var LASCourses = LASString.split("\n");
 	var LASCodes = [];

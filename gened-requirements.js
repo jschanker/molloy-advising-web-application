@@ -63,7 +63,11 @@ function getGenEdObject()
 	var theology = ["THE  100", "THE  101", "THE  104", "THE  220H","THE  221", "THE  225", "THE  230", "THE  241",
 	                "THE  242", "THE  251", "THE  252", "THE  254", "THE  257", "THE  260", "THE  262", "THE  263",
 	                "THE  265", "THE  273", "THE  281", "THE  285", "THE  300", "THE  320H","THE  325", "THE  330",
-	                "THE  340", "THE  350", "THE  355", "THE  370", "THE  390"];
+	                "THE  340", "THE  350", "THE  355", "THE  370", "THE  390",
+	                "TRS  100", "TRS  101", "TRS  104", "TRS  220H","TRS  221", "TRS  225", "TRS  230", "TRS  241",
+	                "TRS  242", "TRS  251", "TRS  252", "TRS  254", "TRS  257", "TRS  260", "TRS  262", "TRS  263",
+	                "TRS  265", "TRS  273", "TRS  281", "TRS  285", "TRS  300", "TRS  320H","TRS  325", "TRS  330",
+	                "TRS  340", "TRS  350", "TRS  355", "TRS  370", "TRS  390"];
 	/*var cl_philosopy_theology = ["PHI/THE 270"];
 	philosophy = philosophy.concat(cl_philosopy_theology);
 	theology = theology.concat(cl_philosopy_theology);*/
