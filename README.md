@@ -1,3 +1,6 @@
+Old Master Branch
+=================
+
 Major courses in progress
 =========================
 Currently math major and related requirements mostly work.  It may not warn you about a course for which you passed but received a C- or less that will not be offered again before you graduate.  Similarly, it takes D to be an acceptable grade for satisfying the prerequisite.  Nevertheless, it'll still mention that you need to take the course in this case.
