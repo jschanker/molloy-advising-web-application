@@ -624,7 +624,7 @@ function getMajorMinorWarning(majorMinorCourseRequirements, semestersToGraduate,
 	// may want to include major/minor logic in this function instead
 
     var MAX_COURSE_DEPTH = 8; // for error prevention: don't go deeper than 8 courses of prerequisites
-    var OFFSET_FROM_FALL_2014 = 3;
+    var OFFSET_FROM_FALL_2014 = 6;
 	
 	var warning = "For your major and related requirements, you still need the following (Note: each course may have an unlisted alternative.):\n";
 
