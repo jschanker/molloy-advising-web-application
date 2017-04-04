@@ -59,8 +59,8 @@ function getCISMajorRequirements()
 function getCSCMajorRequirements()
 {
 	var majorName = "CSC";
-	var majorCodeNumbers = [[120],[121],[235],[229],[244],[323],[330],[340],[460],[491],[335,337,390],[335,337,390]];
-	var relatedCodes = [["MAT  115"], ["MAT  221"], ["MAT  222"], ["MAT  228"], ["MAT  232"]];
+	var majorCodeNumbers = [[120],[121],[235],[229],[244],[337,323,330,352],[352,323,330,337],[460],[491],[103,112,102,105,217,224,255,100,335,337,390],[112,102,105,217,224,255,100,335,337,390],[102,112,105,217,224,255,100,335,337,390]];
+	var relatedCodes = [["MAT  115"], ["MAT  221"], ["MAT  222"], ["MAT  231"], ["MAT  232"]];
 
 	return {majorName: majorName,
 		    majorCodeNumbers: majorCodeNumbers,
