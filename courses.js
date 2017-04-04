@@ -535,12 +535,33 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 	{
 		switch(codeNumber)
 		{
+			case 102:
+				return {
+					title: "Computer Applications and CIS",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
 			case 103:
 				return {
 					title: "Visual Basic OOP",
 					prerequisites:[],
 					credits:3,
 					offered:15
+				};
+			case 105:
+				return {
+					title: "Computer Applications for Business",
+					prerequisites:[],
+					credits:3,
+					offered:15
+				};
+			case 112:
+				return {
+					title: "Introduction to Web Design and Development",
+					prerequisites:[],
+					credits:3,
+					offered:10
 				};
 			case 120:
 				return {
@@ -555,6 +576,13 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					prerequisites:["CSC  120"],
 					credits:3,
 					offered:0
+				};
+			case 217:
+				return {
+					title: "Computer Forensics",
+					prerequisites:[],
+					credits:3,
+					offered:2
 				};
 			case 224:
 				return {
@@ -625,6 +653,13 @@ function getCourseWithCode(courseAreaCode, codeNumber)
 					prerequisites:["CSC  323"],
 					credits:3,
 					offered:1
+				};
+			case 352:
+				return {
+					title: "Back-End Web/Mobile App Development",
+					prerequisites:["CSC  120", "CSC  335"],
+					credits:3,
+					offered:8
 				};
 			case 390:
 				return {
